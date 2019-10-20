@@ -1,0 +1,36 @@
+{
+  "name": "mongo-migrate-ts",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "migrations": "dist/bin/index.js"
+  },
+  "scripts": {
+    "dev": "ts-node bin/index.ts",
+    "build": "",
+    "test": "jest"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cli-table": "^0.3.0",
+    "@types/commander": "^2.12.2",
+    "@types/jest": "^24.0.19",
+    "@types/mongodb": "^3.3.6",
+    "@types/node": "^12.11.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "cli-table": "^0.3.1",
+    "commander": "^3.0.2",
+    "mongodb": "^3.3.3",
+    "ora": "^4.0.2"
+  }
+}
