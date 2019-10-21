@@ -37,9 +37,19 @@ program
 
 program
   .command('down')
-  .description('Undo all applied migrations')
+  .description('Undo migrations')
+  .option('-l, --last', 'Undo the last applied migration')
+  .option('-a, --all', 'Undo all applied migrations')
   .action((cmd: Command) => {
-    down();
+    const opts = cmd.opts();
+    if (!opts.last && !opts.all) {
+      cmd.outputHelp();
+      process.exit(-1);
+    }
+
+    down({
+      mode: opts.last ? 'last' : 'all'
+    });
   });
 
 program

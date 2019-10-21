@@ -7,7 +7,7 @@ const MIGRATIONS_DIR = 'migrations';
 export interface IConfig {
   uri: string;
   database: string;
-  useEnv: boolean;
+  useEnv?: boolean;
   options: MongoClientOptions;
   migrationsDir: string;
   migrationsCollection: string;

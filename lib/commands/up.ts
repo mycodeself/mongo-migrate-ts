@@ -9,9 +9,10 @@ import ora from 'ora';
 import { loadMigrations, Migration } from '../migrations';
 
 export const up = async () => {
-  const { migrationsDir } = getConfig();
+  const { migrationsDir, migrationsCollection } = getConfig();
   const connection = await connectDatabase();
-  const appliedMigrations = await getAppliedMigrations(connection);
+  const collection = connection.db.collection(migrationsCollection);
+  const appliedMigrations = await getAppliedMigrations(collection);
   const migrations = (await loadMigrations(migrationsDir)).filter(
     (migration: Migration) =>
       appliedMigrations.find(
@@ -23,7 +24,7 @@ export const up = async () => {
     migrations.map(async (migration: Migration) => {
       const spinner = ora('Applying migrations').start();
       await migration.instance.up(connection.db);
-      await insertMigration(connection, migration);
+      await insertMigration(collection, migration);
       spinner.succeed(`Migration ${migration.className} applied`).stop();
     })
   );

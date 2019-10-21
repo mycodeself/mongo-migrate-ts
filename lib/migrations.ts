@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { MigrationInterface } from './MigrationInterface';
+import { flatArray } from './utils/flatArray';
 
 export interface Migration {
   file: string;
@@ -11,17 +12,17 @@ export const loadMigrations = async (
   migrationsDir: string
 ): Promise<Migration[]> => {
   const fileExt = new RegExp(/\.(ts|js)$/i);
-  const migrationsObj = Promise.all(
+  const migrations = Promise.all(
     fs
       .readdirSync(migrationsDir)
       .filter((file: string) => fileExt.test(file))
       .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
   );
 
-  const flatMigrations = [].concat(...((await migrationsObj) as Array<[]>));
-  const migrations = flatMigrations.filter((m: any) => isMigration(m.instance));
+  // flat migrations because in one file can be more than one migration
+  const flatMigrations = flatArray(await migrations);
 
-  return migrations;
+  return flatMigrations;
 };
 
 export const loadMigrationFile = async (
@@ -29,11 +30,16 @@ export const loadMigrationFile = async (
 ): Promise<Migration[]> => {
   const classes = await import(filePath);
 
-  return Object.keys(classes).map((key: string) => ({
-    file: filePath,
-    className: key,
-    instance: new classes[key]()
-  }));
+  return Object.keys(classes)
+    .filter((key: string) => typeof classes[key] === 'function')
+    .map((key: string) => {
+      return {
+        file: filePath,
+        className: key,
+        instance: new classes[key]()
+      };
+    })
+    .filter((migration: Migration) => isMigration(migration.instance));
 };
 
 const isMigration = (obj: any): boolean => {

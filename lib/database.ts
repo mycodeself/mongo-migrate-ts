@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb';
+import { Collection, Db, MongoClient } from 'mongodb';
 import { getConfig } from './config';
 import { Migration } from './migrations';
 
@@ -34,11 +34,9 @@ export const connectDatabase = async (): Promise<Connection> => {
 };
 
 export const insertMigration = async (
-  conn: Connection,
+  collection: Collection,
   migration: Migration
 ) => {
-  const config = getConfig();
-  const collection = conn.db.collection(config.migrationsCollection);
   await collection.insertOne({
     file: migration.file,
     className: migration.className,
@@ -47,21 +45,29 @@ export const insertMigration = async (
 };
 
 export const deleteMigration = async (
-  conn: Connection,
+  collection: Collection,
   migration: Migration
 ) => {
-  const config = getConfig();
-  const collection = conn.db.collection(config.migrationsCollection);
   await collection.deleteOne({
     className: migration.className
   });
 };
 
 export const getAppliedMigrations = async (
-  conn: Connection
+  collection: Collection
 ): Promise<MigrationModel[]> => {
-  const config = getConfig();
-  const collection = conn.db.collection(config.migrationsCollection);
+  return await collection
+    .find()
+    .sort({ timestamp: -1 })
+    .toArray();
+};
 
-  return await collection.find().toArray();
+export const getLastAppliedMigration = async (
+  collection: Collection
+): Promise<MigrationModel> => {
+  return await collection
+    .find({})
+    .sort({ timestamp: -1 })
+    .limit(1)
+    .next();
 };

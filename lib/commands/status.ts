@@ -8,9 +8,10 @@ import { loadMigrations, Migration } from '../migrations';
 import Table from 'cli-table';
 
 export const status = async () => {
-  const { migrationsDir } = getConfig();
+  const { migrationsDir, migrationsCollection } = getConfig();
   const connection = await connectDatabase();
-  const appliedMigrations = await getAppliedMigrations(connection);
+  const collection = connection.db.collection(migrationsCollection);
+  const appliedMigrations = await getAppliedMigrations(collection);
   const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
     (migration: Migration) =>
       appliedMigrations.find(
