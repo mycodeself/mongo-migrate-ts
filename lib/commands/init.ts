@@ -3,8 +3,8 @@ import { getDefaultConfigPath } from '../config';
 
 export const init = () => {
   const baseOptions = {
-    uri: '',
-    database: '',
+    uri: 'mongodb://username:password@host:27017',
+    database: 'db',
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true

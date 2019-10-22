@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
 
-export interface Migration {
+export interface IMigration {
   file: string;
   className: string;
   instance: MigrationInterface;
@@ -10,7 +10,7 @@ export interface Migration {
 
 export const loadMigrations = async (
   migrationsDir: string
-): Promise<Migration[]> => {
+): Promise<IMigration[]> => {
   const fileExt = new RegExp(/\.(ts|js)$/i);
   const migrations = Promise.all(
     fs
@@ -27,7 +27,11 @@ export const loadMigrations = async (
 
 export const loadMigrationFile = async (
   filePath: string
-): Promise<Migration[]> => {
+): Promise<IMigration[]> => {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`File ${filePath} not exists.`);
+  }
+
   const classes = await import(filePath);
 
   return Object.keys(classes)
@@ -39,7 +43,7 @@ export const loadMigrationFile = async (
         instance: new classes[key]()
       };
     })
-    .filter((migration: Migration) => isMigration(migration.instance));
+    .filter((migration: IMigration) => isMigration(migration.instance));
 };
 
 const isMigration = (obj: any): boolean => {

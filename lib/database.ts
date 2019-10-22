@@ -1,20 +1,20 @@
 import { Collection, Db, MongoClient } from 'mongodb';
 import { getConfig } from './config';
-import { Migration } from './migrations';
+import { IMigration } from './migrations';
 
-export interface Connection {
+export interface IConnection {
   client: MongoClient;
   db: Db;
 }
 
-export interface MigrationModel {
+export interface IMigrationModel {
   id: number;
   file: string;
   className: string;
   timestamp: number;
 }
 
-export const connectDatabase = async (): Promise<Connection> => {
+export const connectDatabase = async (): Promise<IConnection> => {
   const config = getConfig();
   if (!config.uri) {
     throw new Error(`No "uri" entry found in the config file`);
@@ -35,7 +35,7 @@ export const connectDatabase = async (): Promise<Connection> => {
 
 export const insertMigration = async (
   collection: Collection,
-  migration: Migration
+  migration: IMigration
 ) => {
   await collection.insertOne({
     file: migration.file,
@@ -46,26 +46,26 @@ export const insertMigration = async (
 
 export const deleteMigration = async (
   collection: Collection,
-  migration: Migration
+  migration: IMigration
 ) => {
   await collection.deleteOne({
     className: migration.className
   });
 };
 
-export const getAppliedMigrations = async (
+export const getAppliedMigrations = (
   collection: Collection
-): Promise<MigrationModel[]> => {
-  return await collection
+): Promise<IMigrationModel[]> => {
+  return collection
     .find()
     .sort({ timestamp: -1 })
     .toArray();
 };
 
-export const getLastAppliedMigration = async (
+export const getLastAppliedMigration = (
   collection: Collection
-): Promise<MigrationModel> => {
-  return await collection
+): Promise<IMigrationModel> => {
+  return collection
     .find({})
     .sort({ timestamp: -1 })
     .limit(1)

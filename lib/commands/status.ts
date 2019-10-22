@@ -1,33 +1,34 @@
+import cliTable from 'cli-table';
 import { getConfig } from '../config';
 import {
   connectDatabase,
   getAppliedMigrations,
-  MigrationModel
+  IMigrationModel
 } from '../database';
-import { loadMigrations, Migration } from '../migrations';
-import Table from 'cli-table';
+import { IMigration, loadMigrations } from '../migrations';
 
 export const status = async () => {
   const { migrationsDir, migrationsCollection } = getConfig();
   const connection = await connectDatabase();
   const collection = connection.db.collection(migrationsCollection);
   const appliedMigrations = await getAppliedMigrations(collection);
+
   const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
-    (migration: Migration) =>
+    (migration: IMigration) =>
       appliedMigrations.find(
-        (m: MigrationModel) => m.className === migration.className
+        (m: IMigrationModel) => m.className === migration.className
       ) === undefined
   );
 
-  const table = new Table({
+  const table = new cliTable({
     head: ['Migration', 'Status', 'Timestamp']
   });
 
-  appliedMigrations.map((migration: MigrationModel) => {
+  appliedMigrations.map((migration: IMigrationModel) => {
     table.push([migration.className, 'up', migration.timestamp]);
   });
 
-  notAppliedMigrations.map((migration: Migration) => {
+  notAppliedMigrations.map((migration: IMigration) => {
     table.push([migration.className, 'pending', '-']);
   });
 

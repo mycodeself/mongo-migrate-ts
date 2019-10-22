@@ -1,5 +1,6 @@
 dist/
 node_modules/
-migrations/
+migrations
+!examples/migrations
 migrations.json
 *.log

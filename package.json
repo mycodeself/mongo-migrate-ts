@@ -1,15 +1,17 @@
 {
   "name": "mongo-migrate-ts",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "bin": {
     "migrations": "dist/bin/index.js"
   },
   "scripts": {
     "dev": "ts-node bin/index.ts",
-    "build": "",
-    "test": "jest"
+    "build": "yarn clean && tsc",
+    "lint": "tslint -c tslint.json 'lib/**/*.{ts}'",
+    "test": "jest",
+    "clean": "rimraf dist"
   },
   "license": "MIT",
   "devDependencies": {
@@ -18,8 +20,17 @@
     "@types/jest": "^24.0.19",
     "@types/mongodb": "^3.3.6",
     "@types/node": "^12.11.1",
+    "husky": "^3.0.9",
     "jest": "^24.9.0",
+    "lint-staged": "^9.4.2",
     "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.25.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.24.3",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
@@ -32,5 +43,17 @@
     "commander": "^3.0.2",
     "mongodb": "^3.3.3",
     "ora": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "tslint -c tslint.json --fix",
+      "prettier --write",
+      "git add"
+    ]
   }
 }

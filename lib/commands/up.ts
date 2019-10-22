@@ -1,12 +1,12 @@
+import ora from 'ora';
 import { getConfig } from '../config';
 import {
   connectDatabase,
-  insertMigration,
   getAppliedMigrations,
-  MigrationModel
+  IMigrationModel,
+  insertMigration
 } from '../database';
-import ora from 'ora';
-import { loadMigrations, Migration } from '../migrations';
+import { IMigration, loadMigrations } from '../migrations';
 
 export const up = async () => {
   const { migrationsDir, migrationsCollection } = getConfig();
@@ -14,14 +14,14 @@ export const up = async () => {
   const collection = connection.db.collection(migrationsCollection);
   const appliedMigrations = await getAppliedMigrations(collection);
   const migrations = (await loadMigrations(migrationsDir)).filter(
-    (migration: Migration) =>
+    (migration: IMigration) =>
       appliedMigrations.find(
-        (m: MigrationModel) => m.className === migration.className
+        (m: IMigrationModel) => m.className === migration.className
       ) === undefined
   );
 
   await Promise.all(
-    migrations.map(async (migration: Migration) => {
+    migrations.map(async (migration: IMigration) => {
       const spinner = ora('Applying migrations').start();
       await migration.instance.up(connection.db);
       await insertMigration(collection, migration);

@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import { getConfig } from '../config';
 
-interface Options {
+interface IOptions {
   migrationName: string;
 }
 
-export const newCommand = (options: Options): string => {
+export const newCommand = (options: IOptions): string => {
   const { migrationName } = options;
   const { migrationsDir } = getConfig();
 

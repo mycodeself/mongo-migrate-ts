@@ -1,9 +1,11 @@
+#!/usr/bin/env node
+
 import { Command } from 'commander';
-import { newCommand } from '../lib/commands/new';
-import { up } from '../lib/commands/up';
-import { init } from '../lib/commands/init';
-import { status } from '../lib/commands/status';
 import { down } from '../lib/commands/down';
+import { init } from '../lib/commands/init';
+import { newCommand } from '../lib/commands/new';
+import { status } from '../lib/commands/status';
+import { up } from '../lib/commands/up';
 
 const program = new Command();
 
