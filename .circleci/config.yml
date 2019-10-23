@@ -22,10 +22,23 @@ jobs:
           at: .
       - run: yarn test
 
+   release:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn release
+
 workflows:
   main:
     jobs:
       - build
       - test:
           requires:
-            - build
+            - build                  
+      - release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
