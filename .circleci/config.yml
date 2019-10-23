@@ -37,6 +37,7 @@ workflows:
           requires:
             - build
       - release:
+          context: dev
           requires:
             - test
           filters:
