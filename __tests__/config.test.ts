@@ -2,15 +2,15 @@ import * as fs from 'fs';
 import { getConfig, getDefaultConfigPath } from '../lib/config';
 import { clearConfig } from '../lib/utils/testUtils';
 
-beforeEach(() => {
-  clearConfig();
-});
-
-afterEach(() => {
-  clearConfig();
-});
-
 describe('config', () => {
+  beforeEach(() => {
+    clearConfig();
+  });
+
+  afterEach(() => {
+    clearConfig();
+  });
+
   it('should read a configuration from file', () => {
     const filePath = getDefaultConfigPath();
     const baseOptions = {

@@ -4,12 +4,12 @@ import { newCommand } from '../lib/commands/new';
 import { clearConfig } from '../lib/utils/testUtils';
 
 describe('new command', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     clearConfig();
     init();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     clearConfig();
   });
   it('should create a new migration file', () => {

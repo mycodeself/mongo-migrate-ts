@@ -2,14 +2,16 @@ import * as fs from 'fs';
 import { init } from '../lib/commands/init';
 import { getConfig, getDefaultConfigPath } from '../lib/config';
 import { clearConfig } from '../lib/utils/testUtils';
-beforeAll(() => {
-  clearConfig();
-});
 
-afterAll(() => {
-  clearConfig();
-});
 describe('init command', () => {
+  beforeEach(() => {
+    clearConfig();
+  });
+
+  afterEach(() => {
+    clearConfig();
+  });
+
   it('should create default migration folder and configuration file', () => {
     init();
     const configPath = getDefaultConfigPath();
