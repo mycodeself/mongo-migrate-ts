@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { getConfig } from '../lib/config';
+import { getConfig, getDefaultConfigPath } from '../lib/config';
 import { clearConfig } from '../lib/utils/testUtils';
 
 beforeEach(() => {
@@ -12,7 +12,7 @@ afterEach(() => {
 
 describe('config', () => {
   it('should read a configuration from file', () => {
-    const filePath = `${__dirname}/../migrations.json`;
+    const filePath = getDefaultConfigPath();
     const baseOptions = {
       uri: 'mongodb://user:pass@localhost:27017',
       database: 'test',

@@ -3,15 +3,15 @@ import { init } from '../lib/commands/init';
 import { newCommand } from '../lib/commands/new';
 import { clearConfig } from '../lib/utils/testUtils';
 
-beforeAll(() => {
-  init();
-});
-
-afterAll(() => {
-  clearConfig();
-});
-
 describe('new command', () => {
+  beforeAll(() => {
+    clearConfig();
+    init();
+  });
+
+  afterAll(() => {
+    clearConfig();
+  });
   it('should create a new migration file', () => {
     const migrationName = 'TestMigration';
     const migrationPath = newCommand({ migrationName });
