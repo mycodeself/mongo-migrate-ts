@@ -1,6 +1,11 @@
 # mongo-migrate-ts
+[![CircleCI](https://circleci.com/gh/mycodeself/mongo-migrate-ts.svg?style=svg)](https://circleci.com/gh/mycodeself/mongo-migrate-ts)
+
 ---
+
 A library for easy run migrations on mongodb with TypeScript.
+
+Based on migrate-mongo (https://github.com/seppevs/migrate-mongo/), but with TypeScript support.
 
 ## CLI
 ```
@@ -30,5 +35,4 @@ migrations.json
   "migrationsDir": "migrations",
   "migrationsCollection": "migrations_changelog"
 }
-
 ```
