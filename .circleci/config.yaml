@@ -1,0 +1,29 @@
+version: 2.1
+executors:
+  node:
+    docker:
+      - image: circleci/node:12.13
+
+jobs:
+  build:
+    executor: node
+    steps:
+      - checkout
+      - run: yarn install
+      - run: yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./*
+  test:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn test
+
+workflows:
+  main:
+    jobs:
+      - build
+      - test
