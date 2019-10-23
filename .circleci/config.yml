@@ -22,7 +22,7 @@ jobs:
           at: .
       - run: yarn test
 
-   release:
+  release:
     executor: node
     steps:
       - attach_workspace:
@@ -35,7 +35,7 @@ workflows:
       - build
       - test:
           requires:
-            - build                  
+            - build
       - release:
           requires:
             - test
