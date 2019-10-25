@@ -6,6 +6,10 @@
   "bin": {
     "migrations": "dist/bin/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mycodeself/mongo-migrate-ts.git"
+  },
   "scripts": {
     "dev": "ts-node bin/index.ts",
     "build": "yarn clean && tsc",
