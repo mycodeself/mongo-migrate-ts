@@ -1,21 +1,35 @@
+jest.mock('fs');
+jest.mock('../lib/config');
+
 import * as fs from 'fs';
-import { init } from '../lib/commands/init';
 import { newCommand } from '../lib/commands/new';
-import { clearConfig } from '../lib/utils/testUtils';
+import { getConfig } from '../lib/config';
 
 describe('new command', () => {
+  const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync');
+  const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync');
+
   beforeEach(() => {
-    clearConfig();
-    init();
+    mkdirSyncSpy.mockReset();
+    writeFileSyncSpy.mockReset();
   });
 
-  afterEach(() => {
-    clearConfig();
-  });
   it('should create a new migration file', () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (getConfig as jest.Mock).mockReturnValue({ migrationsDir: '' });
     const migrationName = 'TestMigration';
-    const migrationPath = newCommand({ migrationName });
+    newCommand({ migrationName });
 
-    expect(fs.existsSync(migrationPath)).toBeTruthy();
+    expect(writeFileSyncSpy).toHaveBeenCalled();
+  });
+
+  it('should create the migration folder if not exists', () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    (getConfig as jest.Mock).mockReturnValue({ migrationsDir: 'dir' });
+    const migrationName = 'TestMigration';
+    newCommand({ migrationName });
+
+    expect(mkdirSyncSpy).toHaveBeenCalledWith('dir');
+    expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 });

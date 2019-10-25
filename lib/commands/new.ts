@@ -22,7 +22,7 @@ export const newCommand = (options: IOptions): string => {
   return migrationPath;
 };
 
-const migrationTemplate = (className: string) => {
+export const migrationTemplate = (className: string) => {
   return `import { MigrationInterface, Db } from "mongo-migrate-ts";
 
     export class ${className} implements MigrationInterface {
