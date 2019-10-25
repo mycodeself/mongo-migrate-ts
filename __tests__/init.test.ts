@@ -1,23 +1,26 @@
+jest.mock('fs');
 import * as fs from 'fs';
 import { init } from '../lib/commands/init';
-import { getConfig, getDefaultConfigPath } from '../lib/config';
-import { clearConfig } from '../lib/utils/testUtils';
 
 describe('init command', () => {
-  beforeEach(() => {
-    clearConfig();
-  });
+  const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync');
+  const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync');
 
-  afterEach(() => {
-    clearConfig();
-  });
+  it('should create default migration folder and configuration file if none exists', () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
 
-  it('should create default migration folder and configuration file', () => {
     init();
-    const configPath = getDefaultConfigPath();
-    const config = getConfig();
 
-    expect(fs.existsSync(configPath)).toBeTruthy();
-    expect(fs.existsSync(config.migrationsDir)).toBeTruthy();
+    expect(mkdirSyncSpy).toHaveBeenCalled();
+    expect(writeFileSyncSpy).toHaveBeenCalled();
+  });
+  it('should NOT create the default migration folder and configuratio nfile if already exists', () => {
+    mkdirSyncSpy.mockReset();
+    writeFileSyncSpy.mockReset();
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    init();
+
+    expect(mkdirSyncSpy).toHaveBeenCalledTimes(0);
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(0);
   });
 });
