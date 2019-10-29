@@ -1,8 +1,7 @@
 module.exports = {
-    "roots": [
-        "<rootDir>"
-    ],
-    "transform": {
-        "^.+\\.ts$": "ts-jest"
-    },
-}
+  modulePathIgnorePatterns: ['__mocks__'],
+  roots: ['<rootDir>'],
+  transform: {
+    '^.+\\.ts$': 'ts-jest'
+  }
+};
