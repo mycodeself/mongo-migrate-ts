@@ -62,3 +62,7 @@ program
   });
 
 program.parse(process.argv);
+
+if (Object.keys(program.opts()).length === 0) {
+  program.outputHelp();
+}
