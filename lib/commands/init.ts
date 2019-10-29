@@ -9,7 +9,7 @@ export const init = () => {
   }
 
   if (!fs.existsSync(configPath)) {
-    // creating migration config
+    // create migration config
     fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 2));
   }
 };

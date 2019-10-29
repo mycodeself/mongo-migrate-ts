@@ -8,7 +8,7 @@ export interface IConnection {
 }
 
 export interface IMigrationModel {
-  id: number;
+  id: string;
   file: string;
   className: string;
   timestamp: number;

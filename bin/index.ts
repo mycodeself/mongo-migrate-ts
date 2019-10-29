@@ -12,7 +12,7 @@ const program = new Command();
 program
   .command('init')
   .description('Creates the migrations directory and configuration file')
-  .action((cmd: Command) => {
+  .action(() => {
     init();
   });
 
@@ -33,7 +33,7 @@ program
 program
   .command('up')
   .description('Run all pending migrations')
-  .action((cmd: Command) => {
+  .action(() => {
     up();
   });
 
@@ -57,12 +57,12 @@ program
 program
   .command('status')
   .description('Show the status of the migrations')
-  .action((cmd: Command) => {
+  .action(() => {
     status();
   });
 
 program.parse(process.argv);
 
-if (Object.keys(program.opts()).length === 0) {
+if (program.args.length === 0) {
   program.outputHelp();
 }
