@@ -1,24 +1,32 @@
 import { Collection } from 'mongodb';
 import ora from 'ora';
-import { getConfig } from '../config';
+import { IConfig, processConfig } from '../config';
 import {
-  connectDatabase,
   deleteMigration,
   getAppliedMigrations,
   getLastAppliedMigration,
   IConnection,
-  IMigrationModel
+  IMigrationModel,
+  mongoConnect
 } from '../database';
 import { IMigration, loadMigrationFile } from '../migrations';
 import { flatArray } from '../utils/flatArray';
 
 interface IOptions {
+  config: IConfig;
   mode: 'all' | 'last';
 }
 
-export const down = async ({ mode }: IOptions) => {
-  const { migrationsDir, migrationsCollection } = getConfig();
-  const connection = await connectDatabase();
+export const down = async ({ mode, config }: IOptions) => {
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir
+  } = processConfig(config);
+
+  const connection = await mongoConnect(uri, database, options);
   const collection = connection.db.collection(migrationsCollection);
   // down all migrations
   try {

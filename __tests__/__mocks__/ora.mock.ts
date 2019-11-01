@@ -1,5 +1,5 @@
 export const oraMock = () => ({
   start: () => ({
-    succeed: () => ({ stop: () => undefined })
+    succeed: () => ({ stop: () => jest.fn() })
   })
 });

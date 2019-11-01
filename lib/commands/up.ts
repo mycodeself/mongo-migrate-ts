@@ -1,16 +1,26 @@
 import ora from 'ora';
-import { getConfig } from '../config';
+import { IConfig, processConfig } from '../config';
 import {
-  connectDatabase,
   getAppliedMigrations,
   IMigrationModel,
-  insertMigration
+  insertMigration,
+  mongoConnect
 } from '../database';
 import { IMigration, loadMigrations } from '../migrations';
 
-export const up = async () => {
-  const { migrationsDir, migrationsCollection } = getConfig();
-  const connection = await connectDatabase();
+interface IOptions {
+  config: IConfig;
+}
+
+export const up = async (opts: IOptions) => {
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir
+  } = opts.config; // processConfig(opts.config);
+  const connection = await mongoConnect(uri!, database!, options);
   const collection = connection.db.collection(migrationsCollection);
   const appliedMigrations = await getAppliedMigrations(collection);
   const migrations = (await loadMigrations(migrationsDir)).filter(

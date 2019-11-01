@@ -1,16 +1,27 @@
 import cliTable from 'cli-table';
-import { getConfig } from '../config';
+import { IConfig, processConfig } from '../config';
 import {
-  connectDatabase,
   getAppliedMigrations,
-  IMigrationModel
+  IMigrationModel,
+  mongoConnect
 } from '../database';
 import { IMigration, loadMigrations } from '../migrations';
 
-export const status = async () => {
-  const { migrationsDir, migrationsCollection } = getConfig();
-  const connection = await connectDatabase();
+interface IOptions {
+  config: IConfig;
+}
+
+export const status = async (opts: IOptions) => {
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir
+  } = processConfig(opts.config);
+  const connection = await mongoConnect(uri, database, options);
   const collection = connection.db.collection(migrationsCollection);
+
   const appliedMigrations = await getAppliedMigrations(collection);
 
   const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(

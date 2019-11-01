@@ -1,13 +1,12 @@
 import * as fs from 'fs';
-import { getConfig } from '../config';
 
 interface IOptions {
+  migrationsDir: string;
   migrationName: string;
 }
 
-export const newCommand = (options: IOptions): string => {
-  const { migrationName } = options;
-  const { migrationsDir } = getConfig();
+export const newCommand = (opts: IOptions): string => {
+  const { migrationName, migrationsDir } = opts;
 
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);

@@ -1,30 +1,22 @@
-jest.mock('../lib/config');
 jest.mock('../lib/database');
 jest.mock('../lib/migrations');
 jest.mock('ora');
 
 import ora from 'ora';
 import { up } from '../lib/commands/up';
-import { getConfig } from '../lib/config';
 import {
-  connectDatabase,
   getAppliedMigrations,
   IMigrationModel,
-  insertMigration
+  insertMigration,
+  mongoConnect
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
 import { IMigration, loadMigrations } from '../lib/migrations';
+import { configMock } from './__mocks__/config.mock';
+import { connectionMock } from './__mocks__/connection.mock';
 import { oraMock } from './__mocks__/ora.mock';
 
 describe('up command', () => {
-  const connection = {
-    db: {
-      collection: jest.fn()
-    },
-    client: {
-      close: jest.fn()
-    }
-  };
   const numberOfMigrations = 10;
   const fakeMigrationInstance: MigrationInterface = {
     up: jest.fn(),
@@ -38,14 +30,8 @@ describe('up command', () => {
       instance: fakeMigrationInstance
     }));
 
-  (getConfig as jest.Mock).mockReturnValue({
-    uri: 'mongodb://user:pass@localhost:27017',
-    database: 'test',
-    migrationsDir: 'migrations',
-    migrationsCollection: 'migrations_changelog'
-  });
-  (connectDatabase as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(connection))
+  (mongoConnect as jest.Mock).mockReturnValue(
+    new Promise(resolve => resolve(connectionMock))
   );
   (loadMigrations as jest.Mock).mockReturnValue(
     new Promise(resolve => resolve(Promise.all(fakeMigrations)))
@@ -54,7 +40,7 @@ describe('up command', () => {
   beforeEach(() => {
     (fakeMigrationInstance.up as jest.Mock).mockReset();
     (insertMigration as jest.Mock).mockReset();
-    (connection.client.close as jest.Mock).mockReset();
+    (connectionMock.client.close as jest.Mock).mockReset();
   });
 
   it('should apply all migrations when there are no applied migrations', async () => {
@@ -64,11 +50,11 @@ describe('up command', () => {
 
     ((ora as unknown) as jest.Mock).mockImplementation(oraMock);
 
-    await up();
+    await up({ config: configMock });
 
     expect(fakeMigrationInstance.up).toBeCalledTimes(fakeMigrations.length);
     expect(insertMigration).toBeCalledTimes(fakeMigrations.length);
-    expect(connection.client.close).toBeCalled();
+    expect(connectionMock.client.close).toBeCalled();
   });
 
   it('should apply only the migrations that are not applied jet', async () => {
@@ -87,10 +73,10 @@ describe('up command', () => {
 
     const migrationsToApply = fakeMigrations.length - appliedMigrations.length;
 
-    await up();
+    await up({ config: configMock });
 
     expect(fakeMigrationInstance.up).toBeCalledTimes(migrationsToApply);
     expect(insertMigration).toBeCalledTimes(migrationsToApply);
-    expect(connection.client.close());
+    expect(connectionMock.client.close());
   });
 });
