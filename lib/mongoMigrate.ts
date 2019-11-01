@@ -6,7 +6,7 @@ import { status } from './commands/status';
 import { up } from './commands/up';
 import { IConfig } from './config';
 
-export const run = (config: IConfig) => {
+export const mongoMigrateCli = (config: IConfig) => {
   const program = new Command();
 
   program
@@ -21,6 +21,10 @@ export const run = (config: IConfig) => {
     .description('Create a new migration file under migrations directory')
     .option('--name <name>', 'the migration name')
     .action((cmd: Command) => {
+      if (!cmd.opts) {
+        program.help();
+      }
+
       const { name } = cmd.opts();
 
       if (typeof name !== 'string') {

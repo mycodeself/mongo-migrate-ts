@@ -22,17 +22,15 @@ export const newCommand = (opts: IOptions): string => {
 };
 
 export const migrationTemplate = (className: string) => {
-  return `import { MigrationInterface } from "mongo-migrate-ts";
-import { Db } from 'mongodb';
+  return `import { Db } from 'mongodb'
+import { MigrationInterface } from 'mongo-migrate-ts';
 
 export class ${className} implements MigrationInterface {
-
   public async up(db: Db): Promise<any> {
   }
 
   public async down(db: Db): Promise<any> {
   }
-
 }
 `;
 };

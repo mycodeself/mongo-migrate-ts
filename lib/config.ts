@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { MongoClientOptions } from 'mongodb';
+import { getDbFromUri } from './utils/getDbFromUri';
 
 const CONFIG_FILENAME = 'migrations.json';
 const MIGRATIONS_DIR = 'migrations';
@@ -24,17 +25,6 @@ export interface IConfig {
   migrationsDir: string;
   migrationsCollection: string;
 }
-
-export const defaultConfig = {
-  uri: 'mongodb://username:password@host:27017',
-  database: 'db',
-  options: {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  },
-  migrationsDir: 'migrations',
-  migrationsCollection: 'migrations_changelog'
-};
 
 export const readConfigFromFile = (filePath: string): IConfig => {
   if (!fs.existsSync(filePath)) {
@@ -66,7 +56,11 @@ export const processConfig = (config: IConfig): IProcessedConfig => {
   }
 
   if (!dbConfig.database) {
-    throw new Error(`Invalid configuration, database is empty.`);
+    dbConfig.database = getDbFromUri(dbConfig.uri);
+
+    if (!dbConfig.database) {
+      throw new Error(`Invalid configuration, database is empty.`);
+    }
   }
 
   return {
