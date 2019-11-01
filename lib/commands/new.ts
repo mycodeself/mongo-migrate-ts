@@ -1,13 +1,12 @@
 import * as fs from 'fs';
-import { getConfig } from '../config';
 
 interface IOptions {
+  migrationsDir: string;
   migrationName: string;
 }
 
-export const newCommand = (options: IOptions): string => {
-  const { migrationName } = options;
-  const { migrationsDir } = getConfig();
+export const newCommand = (opts: IOptions): string => {
+  const { migrationName, migrationsDir } = opts;
 
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);
@@ -23,16 +22,15 @@ export const newCommand = (options: IOptions): string => {
 };
 
 export const migrationTemplate = (className: string) => {
-  return `import { MigrationInterface, Db } from "mongo-migrate-ts";
+  return `import { Db } from 'mongodb'
+import { MigrationInterface } from 'mongo-migrate-ts';
 
-    export class ${className} implements MigrationInterface {
+export class ${className} implements MigrationInterface {
+  public async up(db: Db): Promise<any> {
+  }
 
-        public async up(db: Db): Promise<any> {
-        }
-
-        public async down(db: Db): Promise<any> {
-        }
-
-    }
-    `;
+  public async down(db: Db): Promise<any> {
+  }
+}
+`;
 };

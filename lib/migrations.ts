@@ -32,7 +32,7 @@ export const loadMigrationFile = async (
     throw new Error(`File ${filePath} not exists.`);
   }
 
-  const classes = await import(filePath);
+  const classes = await import(`${process.env.PWD}/${filePath}`);
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')

@@ -1,33 +1,56 @@
 import ora from 'ora';
-import { getConfig } from '../config';
+import { IConfig, processConfig } from '../config';
 import {
-  connectDatabase,
   getAppliedMigrations,
   IMigrationModel,
-  insertMigration
+  insertMigration,
+  mongoConnect
 } from '../database';
 import { IMigration, loadMigrations } from '../migrations';
 
-export const up = async () => {
-  const { migrationsDir, migrationsCollection } = getConfig();
-  const connection = await connectDatabase();
-  const collection = connection.db.collection(migrationsCollection);
-  const appliedMigrations = await getAppliedMigrations(collection);
-  const migrations = (await loadMigrations(migrationsDir)).filter(
-    (migration: IMigration) =>
-      appliedMigrations.find(
-        (m: IMigrationModel) => m.className === migration.className
-      ) === undefined
-  );
+interface IOptions {
+  config: IConfig;
+}
 
-  await Promise.all(
-    migrations.map(async (migration: IMigration) => {
-      const spinner = ora('Applying migrations').start();
-      await migration.instance.up(connection.db);
-      await insertMigration(collection, migration);
-      spinner.succeed(`Migration ${migration.className} applied`).stop();
-    })
-  );
+export const up = async (opts: IOptions) => {
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir
+  } = processConfig(opts.config);
+  const connection = await mongoConnect(uri, database, options);
+  const spinner = ora('Migrations up').start();
 
-  connection.client.close();
+  try {
+    const collection = connection.db.collection(migrationsCollection);
+    const appliedMigrations = await getAppliedMigrations(collection);
+    const migrations = (await loadMigrations(migrationsDir)).filter(
+      (migration: IMigration) =>
+        appliedMigrations.find(
+          (m: IMigrationModel) => m.className === migration.className
+        ) === undefined
+    );
+
+    if (migrations.length === 0) {
+      spinner.warn('No migrations found').stop();
+      return;
+    }
+
+    await Promise.all(
+      migrations.map(async (migration: IMigration) => {
+        const localSpinner = ora(
+          `Applying migration ${migration.className}`
+        ).start();
+        await migration.instance.up(connection.db);
+        await insertMigration(collection, migration);
+        localSpinner.succeed(`Migration ${migration.className} up`).stop();
+      })
+    );
+
+    spinner.succeed(`${migrations.length} migrations up`).stop();
+  } finally {
+    connection.client.close();
+  }
 };

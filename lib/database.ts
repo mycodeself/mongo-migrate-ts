@@ -1,5 +1,4 @@
-import { Collection, Db, MongoClient } from 'mongodb';
-import { getConfig } from './config';
+import { Collection, Db, MongoClient, MongosOptions } from 'mongodb';
 import { IMigration } from './migrations';
 
 export interface IConnection {
@@ -8,24 +7,19 @@ export interface IConnection {
 }
 
 export interface IMigrationModel {
-  id: number;
+  id: string;
   file: string;
   className: string;
   timestamp: number;
 }
 
-export const connectDatabase = async (): Promise<IConnection> => {
-  const config = getConfig();
-  if (!config.uri) {
-    throw new Error(`No "uri" entry found in the config file`);
-  }
-
-  if (!config.database) {
-    throw new Error(`No "database" entry found in the config file`);
-  }
-
-  const client = await MongoClient.connect(config.uri, config.options);
-  const db = client.db(config.database);
+export const mongoConnect = async (
+  uri: string,
+  database: string,
+  options?: MongosOptions
+): Promise<IConnection> => {
+  const client = await MongoClient.connect(uri, options);
+  const db = client.db(database);
 
   return {
     client,

@@ -1,38 +1,51 @@
 import cliTable from 'cli-table';
-import { getConfig } from '../config';
+import { IConfig, processConfig } from '../config';
 import {
-  connectDatabase,
   getAppliedMigrations,
-  IMigrationModel
+  IMigrationModel,
+  mongoConnect
 } from '../database';
 import { IMigration, loadMigrations } from '../migrations';
 
-export const status = async () => {
-  const { migrationsDir, migrationsCollection } = getConfig();
-  const connection = await connectDatabase();
-  const collection = connection.db.collection(migrationsCollection);
-  const appliedMigrations = await getAppliedMigrations(collection);
+interface IOptions {
+  config: IConfig;
+}
 
-  const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
-    (migration: IMigration) =>
-      appliedMigrations.find(
-        (m: IMigrationModel) => m.className === migration.className
-      ) === undefined
-  );
+export const status = async (opts: IOptions) => {
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir
+  } = processConfig(opts.config);
+  const connection = await mongoConnect(uri, database, options);
+  try {
+    const collection = connection.db.collection(migrationsCollection);
 
-  const table = new cliTable({
-    head: ['Migration', 'Status', 'Timestamp']
-  });
+    const appliedMigrations = await getAppliedMigrations(collection);
 
-  appliedMigrations.map((migration: IMigrationModel) => {
-    table.push([migration.className, 'up', migration.timestamp]);
-  });
+    const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
+      (migration: IMigration) =>
+        appliedMigrations.find(
+          (m: IMigrationModel) => m.className === migration.className
+        ) === undefined
+    );
 
-  notAppliedMigrations.map((migration: IMigration) => {
-    table.push([migration.className, 'pending', '-']);
-  });
+    const table = new cliTable({
+      head: ['Migration', 'Status', 'Timestamp']
+    });
 
-  console.log(table.toString());
+    appliedMigrations.map((migration: IMigrationModel) => {
+      table.push([migration.className, 'up', migration.timestamp]);
+    });
 
-  connection.client.close();
+    notAppliedMigrations.map((migration: IMigration) => {
+      table.push([migration.className, 'pending', '-']);
+    });
+
+    console.log(table.toString());
+  } finally {
+    connection.client.close();
+  }
 };

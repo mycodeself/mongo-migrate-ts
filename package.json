@@ -4,7 +4,7 @@
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "bin": {
-    "migrations": "dist/bin/index.js"
+    "mongo-migrate": "dist/bin/index.js"
   },
   "repository": {
     "type": "git",

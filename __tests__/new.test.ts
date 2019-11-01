@@ -3,7 +3,7 @@ jest.mock('../lib/config');
 
 import * as fs from 'fs';
 import { newCommand } from '../lib/commands/new';
-import { getConfig } from '../lib/config';
+import { configMock } from './__mocks__/config.mock';
 
 describe('new command', () => {
   const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync');
@@ -16,20 +16,19 @@ describe('new command', () => {
 
   it('should create a new migration file', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (getConfig as jest.Mock).mockReturnValue({ migrationsDir: '' });
     const migrationName = 'TestMigration';
-    newCommand({ migrationName });
+    newCommand({ migrationName, migrationsDir: configMock.migrationsDir });
 
     expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 
   it('should create the migration folder if not exists', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (getConfig as jest.Mock).mockReturnValue({ migrationsDir: 'dir' });
-    const migrationName = 'TestMigration';
-    newCommand({ migrationName });
 
-    expect(mkdirSyncSpy).toHaveBeenCalledWith('dir');
+    const migrationName = 'TestMigration';
+    newCommand({ migrationName, migrationsDir: configMock.migrationsDir });
+
+    expect(mkdirSyncSpy).toHaveBeenCalledWith(configMock.migrationsDir);
     expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 });

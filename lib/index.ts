@@ -1,2 +1,2 @@
 export { MigrationInterface } from './MigrationInterface';
-export { Db } from 'mongodb';
+export { mongoMigrateCli } from './mongoMigrate';
