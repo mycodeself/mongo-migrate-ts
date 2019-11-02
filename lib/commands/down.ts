@@ -1,5 +1,6 @@
 import { Collection } from 'mongodb';
 import ora from 'ora';
+import * as path from 'path';
 import { IConfig, processConfig } from '../config';
 import {
   deleteMigration,
@@ -49,7 +50,7 @@ const downAll = async (connection: IConnection, collection: Collection) => {
 
   const migrationsToUndo = await Promise.all(
     appliedMigrations.map(async (migration: IMigrationModel) => {
-      const m = await loadMigrationFile(`${migration.file}`);
+      const m = await loadMigrationFile(migration.file);
       if (m && m.length === 0) {
         throw new Error(
           `Can undo migration ${migration.className}, no class found`
@@ -87,7 +88,7 @@ const downLastAppliedMigration = async (
   }
 
   spinner.text = `Undoing migration ${lastApplied.className}`;
-  const migrationFile = await loadMigrationFile(lastApplied.file);
+  const migrationFile = await loadMigrationFile(path.resolve(lastApplied.file));
   const migration = migrationFile.find(
     (m: IMigration) => m.className === lastApplied.className
   );

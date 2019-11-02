@@ -12,7 +12,7 @@ interface IOptions {
   config: IConfig;
 }
 
-export const up = async (opts: IOptions) => {
+export const up = async (opts: IOptions): Promise<void> => {
   const {
     uri,
     database,

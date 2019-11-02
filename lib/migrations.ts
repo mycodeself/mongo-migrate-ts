@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
 
@@ -32,7 +33,7 @@ export const loadMigrationFile = async (
     throw new Error(`File ${filePath} not exists.`);
   }
 
-  const classes = await import(`${process.env.PWD}/${filePath}`);
+  const classes = await import(path.resolve(filePath));
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')
