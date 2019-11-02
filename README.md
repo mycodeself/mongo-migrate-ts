@@ -8,33 +8,90 @@ A library for easy run migrations on mongodb with TypeScript.
 
 Based on migrate-mongo (https://github.com/seppevs/migrate-mongo/), but with TypeScript support.
 
-## Configuration
-Create a configuration file named `migrations.json` on the root of the project 
+## Installation
+
+Its simple
 ```
-{
-  "uri": "mongodb://username:password@host:port",
-  "database": "db",
-  "options": {
-    "useNewUrlParser": true,
-    "useUnifiedTopology": true
-  },
-  "migrationsDir": "migrations",
-  "migrationsCollection": "migrations_changelog"
+npm install mongo-migrate
+```
+
+You can install it globally for the CLI usage
+```
+npm install -g mongo-migrate
+```
+
+
+## Usage
+
+Create a directory for your migrations and add this content
+```typescript
+import { mongoMigrateCli } from "mongo-migrate-ts";
+
+mongoMigrateCli({
+  uri: "mongodb://username:password@0.0.0.0:27017",
+  database: "db",
+  migrationsDir: __dirname,
+  migrationsCollection: "migrations_collection",
+  options: {
+    useUnifiedTopology: true
+  }
+});
+```
+
+Create a migration file in this folder...
+```typescript
+import { MigrationInterface } from "mongo-migrate-ts";
+import { Db } from "mongodb";
+
+export class MyMigration implements MigrationInterface {
+  async up(db: Db): Promise<any> {
+    await db.createCollection("my_collection");
+  }
+
+  async down(db: Db): Promise<any> {
+    await db.dropCollection("my_collection");
+  }
 }
 ```
 
-or simply run
-
 ```
-$ yarn migrations init
+tsc migrations/index.js && node build/migrations/index.js
 ```
 
-The previous command will create a migrations directory and the base configuration file on the root of your project.
+## Configuration
+
+```typescript
+{
+  uri?: string;
+  database?: string;
+  useEnv?: boolean;
+  environment?: {
+    uriVar?: string;
+    databaseVar?: string;
+  };
+  options?: MongoClientOptions;
+  migrationsDir: string;
+  migrationsCollection: string;
+}
+```
+
+Example configuration in json
+```json
+{
+  "uri": "mongodb://admin:admin@127.0.0.1:27017/mydb?authSource=admin",
+  "migrationsDir": "migrations",
+  "migrationsCollection": "migrations_changelog",
+  "options": {
+    "useUnifiedTopology": true
+  }
+}
+```
+
 
 
 ## CLI
 ```
-Usage: index.ts [options] [command]
+Usage: mongo-migrate [options] [command]
 
 Options:
   -h, --help      output usage information
