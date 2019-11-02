@@ -13,12 +13,11 @@ export const loadMigrations = async (
   migrationsDir: string
 ): Promise<IMigration[]> => {
   const fileExt = new RegExp(/\.(ts|js)$/i);
-  const dir = path.resolve(migrationsDir);
   const migrations = Promise.all(
     fs
-      .readdirSync(dir)
+      .readdirSync(migrationsDir)
       .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${dir}/${file}`))
+      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
   );
 
   // flat migrations because in one file can be more than one migration
@@ -34,7 +33,7 @@ export const loadMigrationFile = async (
     throw new Error(`File ${filePath} not exists.`);
   }
 
-  const classes = await import(`${filePath}`);
+  const classes = await import(path.resolve(filePath));
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')

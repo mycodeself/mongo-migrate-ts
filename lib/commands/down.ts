@@ -50,7 +50,7 @@ const downAll = async (connection: IConnection, collection: Collection) => {
 
   const migrationsToUndo = await Promise.all(
     appliedMigrations.map(async (migration: IMigrationModel) => {
-      const m = await loadMigrationFile(path.resolve(migration.file));
+      const m = await loadMigrationFile(migration.file);
       if (m && m.length === 0) {
         throw new Error(
           `Can undo migration ${migration.className}, no class found`
