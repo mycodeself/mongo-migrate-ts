@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
 
@@ -12,11 +13,12 @@ export const loadMigrations = async (
   migrationsDir: string
 ): Promise<IMigration[]> => {
   const fileExt = new RegExp(/\.(ts|js)$/i);
+  const dir = path.resolve(migrationsDir);
   const migrations = Promise.all(
     fs
-      .readdirSync(migrationsDir)
+      .readdirSync(dir)
       .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+      .map((file: string) => loadMigrationFile(`${dir}/${file}`))
   );
 
   // flat migrations because in one file can be more than one migration
@@ -32,7 +34,7 @@ export const loadMigrationFile = async (
     throw new Error(`File ${filePath} not exists.`);
   }
 
-  const classes = await import(`${process.env.PWD}/${filePath}`);
+  const classes = await import(`${filePath}`);
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')
