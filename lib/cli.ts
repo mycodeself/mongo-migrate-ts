@@ -6,7 +6,7 @@ import { status } from './commands/status';
 import { up } from './commands/up';
 import { IConfig } from './config';
 
-export const mongoMigrateCli = (config: IConfig) => {
+export const cli = (config: IConfig) => {
   const program = new Command();
 
   program

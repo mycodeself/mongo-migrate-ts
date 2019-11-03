@@ -2,8 +2,11 @@ import * as fs from 'fs';
 import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
 
-const CONFIG_FILENAME = 'migrations.json';
-const MIGRATIONS_DIR = 'migrations';
+const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
+const DEFAULT_MIGRATIONS_DIR = 'migrations';
+const DEFAULT_CONFIG_FILENAME = 'migrations.json';
+const DEFAULT_ENV_VAR_URI = 'MONGO_MIGRATE_URI';
+const DEFAULT_ENV_VAR_DB = 'MONGO_MIGRATE_DB';
 
 export interface IProcessedConfig {
   uri: string;
@@ -14,6 +17,8 @@ export interface IProcessedConfig {
 }
 
 export interface IConfig {
+  migrationsDir: string;
+  migrationsCollection?: string;
   uri?: string;
   database?: string;
   useEnv?: boolean;
@@ -22,8 +27,6 @@ export interface IConfig {
     databaseVar?: string;
   };
   options?: MongoClientOptions;
-  migrationsDir: string;
-  migrationsCollection: string;
 }
 
 export const readConfigFromFile = (filePath: string): IConfig => {
@@ -38,10 +41,10 @@ export const readConfigFromFile = (filePath: string): IConfig => {
 };
 
 export const getDefaultConfigPath = (): string =>
-  `${process.env.PWD}/${CONFIG_FILENAME}`;
+  `${process.env.PWD}/${DEFAULT_CONFIG_FILENAME}`;
 
 export const getDefaultMigrationsDir = (): string =>
-  `${process.env.PWD}/${MIGRATIONS_DIR}`;
+  `${process.env.PWD}/${DEFAULT_MIGRATIONS_DIR}`;
 
 export const processConfig = (config: IConfig): IProcessedConfig => {
   const dbConfig = config.useEnv
@@ -66,7 +69,8 @@ export const processConfig = (config: IConfig): IProcessedConfig => {
   return {
     ...dbConfig,
     migrationsDir: config.migrationsDir,
-    migrationsCollection: config.migrationsCollection,
+    migrationsCollection:
+      config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
     options: config.options
   } as IProcessedConfig;
 };
@@ -75,10 +79,10 @@ const getConfigFromEnv = (
   config: IConfig
 ): { uri: string; database: string } => {
   const uriVarName =
-    (config.environment && config.environment.uriVar) || 'MONGO_MIGRATE_URI';
+    (config.environment && config.environment.uriVar) || DEFAULT_ENV_VAR_URI;
   const dbVarName =
     (config.environment && config.environment.databaseVar) ||
-    'MONGO_MIGRATE_DB';
+    DEFAULT_ENV_VAR_DB;
   const uri = process.env[uriVarName] || '';
   const database = process.env[dbVarName] || '';
 

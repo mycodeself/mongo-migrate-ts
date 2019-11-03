@@ -1,4 +1,5 @@
-import { Db, MigrationInterface } from '../../lib';
+import { Db } from 'mongodb';
+import { MigrationInterface } from '../../lib';
 
 export class MigrationExample implements MigrationInterface {
   public async up(db: Db): Promise<any> {

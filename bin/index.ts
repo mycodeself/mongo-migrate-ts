@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
+import { cli } from '../lib/cli';
 import { getDefaultConfigPath, readConfigFromFile } from '../lib/config';
-import { mongoMigrateCli } from '../lib/mongoMigrate';
 
 const config = readConfigFromFile(getDefaultConfigPath());
-mongoMigrateCli(config);
+cli(config);

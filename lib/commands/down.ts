@@ -24,15 +24,14 @@ export const down = async ({ mode, config }: IOptions) => {
   );
   const connection = await mongoConnect(uri, database, options);
   const collection = connection.db.collection(migrationsCollection);
-  // down all migrations
   try {
-    if (mode === 'all') {
-      await downAll(connection, collection);
-    }
-
-    // down last applied migration
-    if (mode === 'last') {
-      await downLastAppliedMigration(connection, collection);
+    switch (mode) {
+      case 'all':
+        await downAll(connection, collection);
+        break;
+      case 'last':
+        await downLastAppliedMigration(connection, collection);
+        break;
     }
   } finally {
     connection.client.close();
@@ -88,7 +87,7 @@ const downLastAppliedMigration = async (
   }
 
   spinner.text = `Undoing migration ${lastApplied.className}`;
-  const migrationFile = await loadMigrationFile(path.resolve(lastApplied.file));
+  const migrationFile = await loadMigrationFile(lastApplied.file);
   const migration = migrationFile.find(
     (m: IMigration) => m.className === lastApplied.className
   );
