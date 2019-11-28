@@ -121,4 +121,10 @@ Example configuration in json
 }
 ```
 
+For contribute use conventional commits:
+
+fix: commit message
+feat: commit message
+BREAKING CHANGE: commit message
+
 _under construction..._
