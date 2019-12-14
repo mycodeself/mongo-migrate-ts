@@ -78,6 +78,7 @@ tsc migrations/index.js && node build/migrations/index.js up
 ```
 
 or run directly with ts-node
+
 ```
 ts-node migrations/index.ts up
 ```
@@ -125,11 +126,3 @@ Example configuration in json
   }
 }
 ```
-
-For contribute use conventional commits:
-
-fix: commit message
-feat: commit message
-BREAKING CHANGE: commit message
-
-_under construction..._
