@@ -11,13 +11,13 @@ Based on migrate-mongo (https://github.com/seppevs/migrate-mongo/), but with Typ
 Its simple
 
 ```
-npm install mongo-migrate
+npm install mongo-migrate-ts
 ```
 
 You can install it globally for the CLI usage
 
 ```
-npm install -g mongo-migrate
+npm install -g mongo-migrate-ts
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ Commands:
   status          Show the status of the migrations
 ```
 
-Create a directory for your migrations and add this content
+Create a directory for your migrations and instantiate a CLI
 
 ```typescript
 import { mongoMigrateCli } from 'mongo-migrate-ts';
@@ -54,7 +54,7 @@ mongoMigrateCli({
 });
 ```
 
-Create a migration file in this folder...
+Create a migration file in the configured migrations folder...
 
 ```typescript
 import { MigrationInterface } from 'mongo-migrate-ts';
@@ -75,6 +75,11 @@ Compile and up all migrations
 
 ```
 tsc migrations/index.js && node build/migrations/index.js up
+```
+
+or run directly with ts-node
+```
+ts-node migrations/index.ts up
 ```
 
 ## Configuration

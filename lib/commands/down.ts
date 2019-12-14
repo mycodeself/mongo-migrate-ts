@@ -60,16 +60,14 @@ const downAll = async (connection: IConnection, collection: Collection) => {
     })
   );
 
-  await Promise.all(
-    flatArray(migrationsToUndo).map(async (migration: IMigration) => {
-      const localSpinner = ora(
-        `Undoing migration ${migration.className}`
-      ).start();
-      await migration.instance.down(connection.db);
-      await deleteMigration(collection, migration);
-      localSpinner.succeed(`Migration ${migration.className} down`).stop();
-    })
-  );
+  for await (const migration of flatArray(migrationsToUndo)) {
+    const localSpinner = ora(
+      `Undoing migration ${migration.className}`
+    ).start();
+    await migration.instance.down(connection.db);
+    await deleteMigration(collection, migration);
+    localSpinner.succeed(`Migration ${migration.className} down`).stop();
+  }
 
   spinner.succeed('All migrations down').stop();
 };
