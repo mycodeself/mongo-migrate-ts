@@ -1,24 +1,24 @@
 import ora from 'ora';
-import { IConfig, processConfig } from '../config';
+import { Config, processConfig } from '../config';
 import {
   getAppliedMigrations,
-  IMigrationModel,
+  MigrationModel,
   insertMigration,
-  mongoConnect
+  mongoConnect,
 } from '../database';
-import { IMigration, loadMigrations } from '../migrations';
+import { MigrationObject, loadMigrations } from '../migrations';
 
-interface IOptions {
-  config: IConfig;
+interface CommandUpOptions {
+  config: Config;
 }
 
-export const up = async (opts: IOptions): Promise<void> => {
+export const up = async (opts: CommandUpOptions): Promise<void> => {
   const {
     uri,
     database,
     options,
     migrationsCollection,
-    migrationsDir
+    migrationsDir,
   } = processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
   const spinner = ora('Migrations up').start();
@@ -27,9 +27,9 @@ export const up = async (opts: IOptions): Promise<void> => {
     const collection = connection.db.collection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
     const migrations = (await loadMigrations(migrationsDir)).filter(
-      (migration: IMigration) =>
+      (migration: MigrationObject) =>
         appliedMigrations.find(
-          (m: IMigrationModel) => m.className === migration.className
+          (m: MigrationModel) => m.className === migration.className
         ) === undefined
     );
 
@@ -37,7 +37,7 @@ export const up = async (opts: IOptions): Promise<void> => {
       spinner.warn('No migrations found').stop();
       return;
     }
-    
+
     for await (const migration of migrations) {
       const localSpinner = ora(
         `Applying migration ${migration.className}`

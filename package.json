@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "ts-node bin/index.ts",
     "build": "yarn clean && tsc",
-    "lint": "tslint -c tslint.json 'lib/**/*.{ts}'",
+    "lint": "eslint -c .eslintrc 'lib/**/*.ts' --fix",
     "test": "jest",
     "clean": "rimraf dist",
     "release": "semantic-release"
@@ -30,10 +30,15 @@
     "@types/jest": "^24.0.19",
     "@types/mongodb": "^3.3.6",
     "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "husky": "^3.0.9",
-    "jest": "^24.9.0",
+    "jest": "^25.2.4",
     "lint-staged": "^9.4.2",
-    "prettier": "^1.18.2",
+    "prettier": "^2.0.2",
     "rimraf": "^3.0.0",
     "rollup": "^1.25.1",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -42,12 +47,10 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.24.3",
     "semantic-release": "^15.13.27",
-    "ts-jest": "^24.2.0",
-    "ts-node": "^8.5.4",
-    "tslint": "^5.20.1",
-    "tslint-config-airbnb": "^5.11.2",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.3"
+    "ts-jest": "^25.3.0",
+    "ts-node": "^8.8.1",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "cli-table": "^0.3.1",
@@ -62,7 +65,7 @@
   },
   "lint-staged": {
     "*.{ts,js}": [
-      "tslint -c tslint.json --fix",
+      "yarn lint --quiet",
       "prettier --write",
       "git add"
     ]

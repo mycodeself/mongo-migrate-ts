@@ -6,12 +6,12 @@ import ora from 'ora';
 import { up } from '../lib/commands/up';
 import {
   getAppliedMigrations,
-  IMigrationModel,
+  MigrationModel,
   insertMigration,
-  mongoConnect
+  mongoConnect,
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
-import { IMigration, loadMigrations } from '../lib/migrations';
+import { MigrationObject, loadMigrations } from '../lib/migrations';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
 import { oraMock } from './__mocks__/ora.mock';
@@ -20,21 +20,21 @@ describe('up command', () => {
   const numberOfMigrations = 10;
   const fakeMigrationInstance: MigrationInterface = {
     up: jest.fn(),
-    down: jest.fn()
+    down: jest.fn(),
   };
-  const fakeMigrations: IMigration[] = Array(numberOfMigrations)
+  const fakeMigrations: MigrationObject[] = Array(numberOfMigrations)
     .fill(undefined)
-    .map((v: IMigration, index: number) => ({
+    .map((v: MigrationObject, index: number) => ({
       className: `MigrationTest${index}`,
       file: `migrations/MigrationTest${index}.ts`,
-      instance: fakeMigrationInstance
+      instance: fakeMigrationInstance,
     }));
 
   (mongoConnect as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(connectionMock))
+    new Promise((resolve) => resolve(connectionMock))
   );
   (loadMigrations as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(Promise.all(fakeMigrations)))
+    new Promise((resolve) => resolve(Promise.all(fakeMigrations)))
   );
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('up command', () => {
 
   it('should apply all migrations when there are no applied migrations', async () => {
     (getAppliedMigrations as jest.Mock).mockReturnValue(
-      new Promise(resolve => resolve([]))
+      new Promise((resolve) => resolve([]))
     );
 
     ((ora as unknown) as jest.Mock).mockImplementation(oraMock);
@@ -60,15 +60,15 @@ describe('up command', () => {
   it('should apply only the migrations that are not applied jet', async () => {
     const appliedMigrations = Array(4)
       .fill(undefined)
-      .map((v: IMigrationModel, index: number) => ({
+      .map((v: MigrationModel, index: number) => ({
         id: index,
         file: `migrations/MigrationTest${index}.ts`,
         className: `MigrationTest${index}`,
-        timestamp: +new Date()
+        timestamp: +new Date(),
       }));
 
     (getAppliedMigrations as jest.Mock).mockReturnValue(
-      new Promise(resolve => resolve(appliedMigrations))
+      new Promise((resolve) => resolve(appliedMigrations))
     );
 
     const migrationsToApply = fakeMigrations.length - appliedMigrations.length;

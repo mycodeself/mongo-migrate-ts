@@ -1,44 +1,53 @@
 import { Collection } from 'mongodb';
 import ora from 'ora';
-import * as path from 'path';
-import { IConfig, processConfig } from '../config';
+import { Config, processConfig } from '../config';
 import {
   deleteMigration,
   getAppliedMigrations,
   getLastAppliedMigration,
-  IConnection,
-  IMigrationModel,
-  mongoConnect
+  DatabaseConnection,
+  MigrationModel,
+  mongoConnect,
 } from '../database';
-import { IMigration, loadMigrationFile } from '../migrations';
+import { MigrationObject, loadMigrationFile } from '../migrations';
 import { flatArray } from '../utils/flatArray';
 
-interface IOptions {
-  config: IConfig;
+interface CommandDownOptions {
+  config: Config;
   mode: 'all' | 'last';
 }
 
-export const down = async ({ mode, config }: IOptions) => {
-  const { uri, database, options, migrationsCollection } = processConfig(
-    config
-  );
-  const connection = await mongoConnect(uri, database, options);
-  const collection = connection.db.collection(migrationsCollection);
-  try {
-    switch (mode) {
-      case 'all':
-        await downAll(connection, collection);
-        break;
-      case 'last':
-        await downLastAppliedMigration(connection, collection);
-        break;
-    }
-  } finally {
-    connection.client.close();
+const downLastAppliedMigration = async (
+  connection: DatabaseConnection,
+  collection: Collection
+): Promise<void> => {
+  const spinner = ora(`Undoing last migration`).start();
+  const lastApplied = await getLastAppliedMigration(collection);
+
+  if (!lastApplied) {
+    spinner.warn(`No migrations found`).stop();
+    return;
   }
+
+  spinner.text = `Undoing migration ${lastApplied.className}`;
+  const migrationFile = await loadMigrationFile(lastApplied.file);
+  const migration = migrationFile.find(
+    (m: MigrationObject) => m.className === lastApplied.className
+  );
+
+  if (!migration) {
+    throw new Error(`Migration (${lastApplied.className}) not found`);
+  }
+
+  await migration.instance.down(connection.db);
+  await deleteMigration(collection, migration);
+  spinner.succeed(`Migration ${lastApplied.className} down`).stop();
 };
 
-const downAll = async (connection: IConnection, collection: Collection) => {
+const downAll = async (
+  connection: DatabaseConnection,
+  collection: Collection
+): Promise<void> => {
   const spinner = ora(`Undoing all migrations`).start();
   const appliedMigrations = await getAppliedMigrations(collection);
 
@@ -48,7 +57,7 @@ const downAll = async (connection: IConnection, collection: Collection) => {
   }
 
   const migrationsToUndo = await Promise.all(
-    appliedMigrations.map(async (migration: IMigrationModel) => {
+    appliedMigrations.map(async (migration: MigrationModel) => {
       const m = await loadMigrationFile(migration.file);
       if (m && m.length === 0) {
         throw new Error(
@@ -72,29 +81,25 @@ const downAll = async (connection: IConnection, collection: Collection) => {
   spinner.succeed('All migrations down').stop();
 };
 
-const downLastAppliedMigration = async (
-  connection: IConnection,
-  collection: Collection
-) => {
-  const spinner = ora(`Undoing last migration`).start();
-  const lastApplied = await getLastAppliedMigration(collection);
-
-  if (!lastApplied) {
-    spinner.warn(`No migrations found`).stop();
-    return;
-  }
-
-  spinner.text = `Undoing migration ${lastApplied.className}`;
-  const migrationFile = await loadMigrationFile(lastApplied.file);
-  const migration = migrationFile.find(
-    (m: IMigration) => m.className === lastApplied.className
+export const down = async ({
+  mode,
+  config,
+}: CommandDownOptions): Promise<void> => {
+  const { uri, database, options, migrationsCollection } = processConfig(
+    config
   );
-
-  if (!migration) {
-    throw new Error(`Migration (${lastApplied.className}) not found`);
+  const connection = await mongoConnect(uri, database, options);
+  const collection = connection.db.collection(migrationsCollection);
+  try {
+    switch (mode) {
+      case 'all':
+        await downAll(connection, collection);
+        break;
+      case 'last':
+        await downLastAppliedMigration(connection, collection);
+        break;
+    }
+  } finally {
+    connection.client.close();
   }
-
-  await migration.instance.down(connection.db);
-  await deleteMigration(collection, migration);
-  spinner.succeed(`Migration ${lastApplied.className} down`).stop();
 };

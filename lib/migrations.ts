@@ -2,33 +2,27 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
+import { isTsNode } from './utils/isTsNode';
 
-export interface IMigration {
+export interface MigrationObject {
   file: string;
   className: string;
   instance: MigrationInterface;
 }
 
-export const loadMigrations = async (
-  migrationsDir: string
-): Promise<IMigration[]> => {
-  const fileExt = new RegExp(/\.(ts|js)$/i);
-  const migrations = Promise.all(
-    fs
-      .readdirSync(migrationsDir)
-      .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+const isMigration = (obj: any): boolean => {
+  return (
+    obj &&
+    obj.up &&
+    obj.down &&
+    typeof obj.up === 'function' &&
+    typeof obj.down === 'function'
   );
-
-  // flat migrations because in one file can be more than one migration
-  const flatMigrations = flatArray(await migrations);
-
-  return flatMigrations;
 };
 
 export const loadMigrationFile = async (
   filePath: string
-): Promise<IMigration[]> => {
+): Promise<MigrationObject[]> => {
   if (!fs.existsSync(filePath)) {
     throw new Error(`File ${filePath} not exists.`);
   }
@@ -41,18 +35,26 @@ export const loadMigrationFile = async (
       return {
         file: filePath,
         className: key,
-        instance: new classes[key]()
+        instance: new classes[key](),
       };
     })
-    .filter((migration: IMigration) => isMigration(migration.instance));
+    .filter((migration: MigrationObject) => isMigration(migration.instance));
 };
 
-const isMigration = (obj: any): boolean => {
-  return (
-    obj &&
-    obj.up &&
-    obj.down &&
-    typeof obj.up === 'function' &&
-    typeof obj.down === 'function'
+export const loadMigrations = async (
+  migrationsDir: string
+): Promise<MigrationObject[]> => {
+  const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
+
+  const migrations = Promise.all(
+    fs
+      .readdirSync(migrationsDir)
+      .filter((file: string) => fileExt.test(file))
+      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
   );
+
+  // flat migrations because in one file can be more than one migration
+  const flatMigrations = flatArray(await migrations);
+
+  return flatMigrations;
 };
