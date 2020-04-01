@@ -4,3 +4,4 @@ migrations
 !examples/migrations
 migrations.json
 *.log
+coverage
