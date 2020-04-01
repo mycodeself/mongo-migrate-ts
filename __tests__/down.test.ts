@@ -8,8 +8,8 @@ import {
   deleteMigration,
   getAppliedMigrations,
   getLastAppliedMigration,
-  IMigrationModel,
-  mongoConnect
+  MigrationModel,
+  mongoConnect,
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
 import { loadMigrationFile } from '../lib/migrations';
@@ -21,36 +21,36 @@ describe('down command', () => {
   const numberOfMigrations = 10;
   const fakeMigrationInstance: MigrationInterface = {
     up: jest.fn(),
-    down: jest.fn()
+    down: jest.fn(),
   };
-  const fakeMigrations: IMigrationModel[] = Array(numberOfMigrations)
+  const fakeMigrations: MigrationModel[] = Array(numberOfMigrations)
     .fill(undefined)
-    .map((v: IMigrationModel, index: number) => ({
+    .map((v: MigrationModel, index: number) => ({
       id: `${index}`,
       className: `MigrationTest${index}`,
       file: `MigrationTest${index}.ts`,
-      timestamp: +new Date()
+      timestamp: +new Date(),
     }));
 
   (mongoConnect as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(connectionMock))
+    new Promise((resolve) => resolve(connectionMock))
   );
 
   (getAppliedMigrations as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(fakeMigrations))
+    new Promise((resolve) => resolve(fakeMigrations))
   );
 
   ((ora as unknown) as jest.Mock).mockImplementation(oraMock);
 
   (loadMigrationFile as jest.Mock).mockImplementation((file: string) => [
     {
-      ...fakeMigrations.find((m: IMigrationModel) => m.file === file),
-      instance: fakeMigrationInstance
-    }
+      ...fakeMigrations.find((m: MigrationModel) => m.file === file),
+      instance: fakeMigrationInstance,
+    },
   ]);
 
   (getLastAppliedMigration as jest.Mock).mockReturnValue(
-    new Promise(resolve => resolve(fakeMigrations[numberOfMigrations - 1]))
+    new Promise((resolve) => resolve(fakeMigrations[numberOfMigrations - 1]))
   );
 
   beforeEach(() => {

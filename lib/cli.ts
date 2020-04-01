@@ -4,9 +4,9 @@ import { init } from './commands/init';
 import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
-import { IConfig } from './config';
+import { Config } from './config';
 
-export const cli = (config: IConfig) => {
+export const cli = (config: Config) => {
   const program = new Command();
 
   program
@@ -55,7 +55,7 @@ export const cli = (config: IConfig) => {
 
       down({
         config,
-        mode: opts.last ? 'last' : 'all'
+        mode: opts.last ? 'last' : 'all',
       });
     });
 

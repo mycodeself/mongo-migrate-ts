@@ -1,23 +1,23 @@
 import cliTable from 'cli-table';
-import { IConfig, processConfig } from '../config';
+import { Config, processConfig } from '../config';
 import {
   getAppliedMigrations,
-  IMigrationModel,
-  mongoConnect
+  MigrationModel,
+  mongoConnect,
 } from '../database';
-import { IMigration, loadMigrations } from '../migrations';
+import { MigrationObject, loadMigrations } from '../migrations';
 
-interface IOptions {
-  config: IConfig;
+interface CommandStatusOptions {
+  config: Config;
 }
 
-export const status = async (opts: IOptions) => {
+export const status = async (opts: CommandStatusOptions) => {
   const {
     uri,
     database,
     options,
     migrationsCollection,
-    migrationsDir
+    migrationsDir,
   } = processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
   try {
@@ -26,21 +26,21 @@ export const status = async (opts: IOptions) => {
     const appliedMigrations = await getAppliedMigrations(collection);
 
     const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
-      (migration: IMigration) =>
+      (migration: MigrationObject) =>
         appliedMigrations.find(
-          (m: IMigrationModel) => m.className === migration.className
+          (m: MigrationModel) => m.className === migration.className
         ) === undefined
     );
 
     const table = new cliTable({
-      head: ['Migration', 'Status', 'Timestamp']
+      head: ['Migration', 'Status', 'Timestamp'],
     });
 
-    appliedMigrations.map((migration: IMigrationModel) => {
+    appliedMigrations.map((migration: MigrationModel) => {
       table.push([migration.className, 'up', migration.timestamp]);
     });
 
-    notAppliedMigrations.map((migration: IMigration) => {
+    notAppliedMigrations.map((migration: MigrationObject) => {
       table.push([migration.className, 'pending', '-']);
     });
 

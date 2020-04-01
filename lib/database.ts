@@ -1,12 +1,12 @@
 import { Collection, Db, MongoClient, MongosOptions } from 'mongodb';
-import { IMigration } from './migrations';
+import { MigrationObject } from './migrations';
 
-export interface IConnection {
+export interface DatabaseConnection {
   client: MongoClient;
   db: Db;
 }
 
-export interface IMigrationModel {
+export interface MigrationModel {
   id: string;
   file: string;
   className: string;
@@ -17,51 +17,44 @@ export const mongoConnect = async (
   uri: string,
   database: string,
   options?: MongosOptions
-): Promise<IConnection> => {
+): Promise<DatabaseConnection> => {
   const client = await MongoClient.connect(uri, options);
   const db = client.db(database);
 
   return {
     client,
-    db
+    db,
   };
 };
 
 export const insertMigration = async (
   collection: Collection,
-  migration: IMigration
+  migration: MigrationObject
 ) => {
   await collection.insertOne({
     file: migration.file,
     className: migration.className,
-    timestamp: +new Date()
+    timestamp: +new Date(),
   });
 };
 
 export const deleteMigration = async (
   collection: Collection,
-  migration: IMigration
+  migration: MigrationObject
 ) => {
   await collection.deleteOne({
-    className: migration.className
+    className: migration.className,
   });
 };
 
 export const getAppliedMigrations = (
   collection: Collection
-): Promise<IMigrationModel[]> => {
-  return collection
-    .find()
-    .sort({ timestamp: -1 })
-    .toArray();
+): Promise<MigrationModel[]> => {
+  return collection.find().sort({ timestamp: -1 }).toArray();
 };
 
 export const getLastAppliedMigration = (
   collection: Collection
-): Promise<IMigrationModel> => {
-  return collection
-    .find({})
-    .sort({ timestamp: -1 })
-    .limit(1)
-    .next();
+): Promise<MigrationModel> => {
+  return collection.find({}).sort({ timestamp: -1 }).limit(1).next();
 };

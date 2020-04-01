@@ -8,7 +8,7 @@ const DEFAULT_CONFIG_FILENAME = 'migrations.json';
 const DEFAULT_ENV_VAR_URI = 'MONGO_MIGRATE_URI';
 const DEFAULT_ENV_VAR_DB = 'MONGO_MIGRATE_DB';
 
-export interface IProcessedConfig {
+export interface ProcessedConfig {
   uri: string;
   database: string;
   migrationsDir: string;
@@ -16,7 +16,7 @@ export interface IProcessedConfig {
   options?: MongoClientOptions;
 }
 
-export interface IConfig {
+export interface Config {
   migrationsDir: string;
   migrationsCollection?: string;
   uri?: string;
@@ -29,13 +29,13 @@ export interface IConfig {
   options?: MongoClientOptions;
 }
 
-export const readConfigFromFile = (filePath: string): IConfig => {
+export const readConfigFromFile = (filePath: string): Config => {
   if (!fs.existsSync(filePath)) {
     throw new Error(`Config file ${filePath} not found.`);
   }
 
   const rawConfig = fs.readFileSync(filePath).toString();
-  const config = JSON.parse(rawConfig) as IConfig;
+  const config = JSON.parse(rawConfig) as Config;
 
   return config;
 };
@@ -46,12 +46,29 @@ export const getDefaultConfigPath = (): string =>
 export const getDefaultMigrationsDir = (): string =>
   `${process.env.PWD}/${DEFAULT_MIGRATIONS_DIR}`;
 
-export const processConfig = (config: IConfig): IProcessedConfig => {
+const getConfigFromEnv = (
+  config: Config
+): { uri: string; database: string } => {
+  const uriVarName =
+    (config.environment && config.environment.uriVar) || DEFAULT_ENV_VAR_URI;
+  const dbVarName =
+    (config.environment && config.environment.databaseVar) ||
+    DEFAULT_ENV_VAR_DB;
+  const uri = process.env[uriVarName] || '';
+  const database = process.env[dbVarName] || '';
+
+  return {
+    uri,
+    database,
+  };
+};
+
+export const processConfig = (config: Config): ProcessedConfig => {
   const dbConfig = config.useEnv
     ? getConfigFromEnv(config)
     : {
         uri: config.uri,
-        database: config.database
+        database: config.database,
       };
 
   if (!dbConfig.uri) {
@@ -71,23 +88,6 @@ export const processConfig = (config: IConfig): IProcessedConfig => {
     migrationsDir: config.migrationsDir,
     migrationsCollection:
       config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
-    options: config.options
-  } as IProcessedConfig;
-};
-
-const getConfigFromEnv = (
-  config: IConfig
-): { uri: string; database: string } => {
-  const uriVarName =
-    (config.environment && config.environment.uriVar) || DEFAULT_ENV_VAR_URI;
-  const dbVarName =
-    (config.environment && config.environment.databaseVar) ||
-    DEFAULT_ENV_VAR_DB;
-  const uri = process.env[uriVarName] || '';
-  const database = process.env[dbVarName] || '';
-
-  return {
-    uri,
-    database
-  };
+    options: config.options,
+  } as ProcessedConfig;
 };
