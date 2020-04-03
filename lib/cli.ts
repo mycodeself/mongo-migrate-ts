@@ -6,7 +6,7 @@ import { status } from './commands/status';
 import { up } from './commands/up';
 import { Config } from './config';
 
-export const cli = (config: Config) => {
+export const cli = (config: Config): void => {
   const program = new Command();
 
   program
@@ -21,14 +21,11 @@ export const cli = (config: Config) => {
     .description('Create a new migration file under migrations directory')
     .option('--name <name>', 'the migration name')
     .action((cmd: Command) => {
-      if (!cmd.opts) {
-        program.help();
-      }
+      const opts = cmd.opts();
+      let name = opts.name;
 
-      const { name } = cmd.opts();
-
-      if (typeof name !== 'string') {
-        cmd.help();
+      if (typeof opts.name !== 'string' || opts.name.length === 0) {
+        name = undefined;
       }
 
       newCommand({ migrationName: name, migrationsDir: config.migrationsDir });
@@ -67,8 +64,4 @@ export const cli = (config: Config) => {
     });
 
   program.parse(process.argv);
-
-  if (program.args.length === 0) {
-    program.outputHelp();
-  }
 };
