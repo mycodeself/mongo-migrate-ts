@@ -1,3 +1,5 @@
+**IMPORTANT: Last version 1.0.7 is broken, use previous version 1.0.6**
+
 # mongo-migrate-ts
 
 [![CircleCI](https://circleci.com/gh/mycodeself/mongo-migrate-ts.svg?style=svg)](https://circleci.com/gh/mycodeself/mongo-migrate-ts)
