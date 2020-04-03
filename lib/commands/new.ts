@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 interface CommandNewOptions {
   migrationsDir: string;
-  migrationName: string;
+  migrationName?: string;
 }
 
 export const migrationTemplate = (className: string) => {
@@ -26,9 +26,10 @@ export const newCommand = (opts: CommandNewOptions): string => {
     fs.mkdirSync(migrationsDir);
   }
 
-  const className = `M${+new Date()}_${migrationName}`;
+  const fileName = `${+new Date()}_${migrationName || 'Migration'}`;
+  const className = `${migrationName || 'Migration'}${+new Date()}`;
   const template = migrationTemplate(className);
-  const migrationPath = `${migrationsDir}/${className}.ts`;
+  const migrationPath = `${migrationsDir}/${fileName}.ts`;
 
   fs.writeFileSync(migrationPath, template);
 

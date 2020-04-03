@@ -5,3 +5,4 @@ migrations
 migrations.json
 *.log
 coverage
+distexamples

@@ -1,12 +1,12 @@
 import { Db } from 'mongodb';
 import { MigrationInterface } from '../../lib';
 
-export class MigrationExample implements MigrationInterface {
+export class Migration1585933701415 implements MigrationInterface {
   public async up(db: Db): Promise<any> {
-    await db.createCollection('example');
+    db.createCollection('mycol');
   }
 
   public async down(db: Db): Promise<any> {
-    await db.dropCollection('example');
+    db.dropCollection('mycol');
   }
 }
