@@ -19,9 +19,11 @@ export const cli = (config: Config): void => {
   program
     .command('new')
     .description('Create a new migration file under migrations directory')
-    .option('--name <name>', 'the migration name')
+    .storeOptionsAsProperties(false)
+    .option('-n, --name <name>', 'the migration name')
     .action((cmd: Command) => {
       const opts = cmd.opts();
+
       let name = opts.name;
 
       if (typeof opts.name !== 'string' || opts.name.length === 0) {
