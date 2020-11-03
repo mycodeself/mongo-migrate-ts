@@ -36,8 +36,15 @@ export const cli = (config: Config): void => {
   program
     .command('up')
     .description('Run all pending migrations')
-    .action(() => {
-      up({ config });
+    .action(async () => {
+      try {
+        await up({ config });
+      } catch (e) {
+        console.error(e);
+        process.exitCode = 1;
+      } finally {
+        process.exit();
+      }
     });
 
   program
