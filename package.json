@@ -1,6 +1,6 @@
 {
   "name": "mongo-migrate-ts",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "bin": {

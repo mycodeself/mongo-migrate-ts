@@ -43,15 +43,20 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
       const localSpinner = ora(
         `Applying migration ${migration.className}`
       ).start();
-      await migration.instance.up(connection.db);
-      await insertMigration(collection, migration);
-      localSpinner.succeed(`Migration ${migration.className} up`).stop();
+      try {
+        await migration.instance.up(connection.db);
+        await insertMigration(collection, migration);
+        localSpinner.succeed(`Migration ${migration.className} up`).stop();
+      } catch (e) {
+        localSpinner.fail(`Error executing migration ${migration.className}`);
+        throw e;
+      }
     }
-
     spinner.succeed(`${migrations.length} migrations up`).stop();
   } catch (e) {
+    spinner.fail('Error executing migrations');
     await connection.client.close(true);
-    throw new ExecuteMigrationError();
+    throw new ExecuteMigrationError(e);
   } finally {
     await connection.client.close(true);
   }

@@ -5,6 +5,7 @@ import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
 import { Config } from './config';
+import { ExecuteMigrationError } from './errors';
 
 export const cli = (config: Config): void => {
   const program = new Command();
@@ -36,8 +37,17 @@ export const cli = (config: Config): void => {
   program
     .command('up')
     .description('Run all pending migrations')
-    .action(() => {
-      up({ config });
+    .action(async () => {
+      try {
+        await up({ config });
+      } catch (e) {
+        if (e instanceof ExecuteMigrationError) {
+          process.exitCode = 1;
+        }
+        console.error(e);
+      } finally {
+        process.exit();
+      }
     });
 
   program
