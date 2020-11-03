@@ -8,8 +8,7 @@ import {
   DatabaseConnection,
 } from '../database';
 import { MigrationObject, loadMigrations } from '../migrations';
-import { ExecuteMigrationError } from '../errors';
-import { DbConnectionError } from '../errors/DbConnectionError';
+import { ExecuteMigrationError, DbConnectionError } from '../errors';
 
 interface CommandUpOptions {
   config: Config;
