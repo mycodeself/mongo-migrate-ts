@@ -5,7 +5,6 @@ import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
 import { Config } from './config';
-import { ExecuteMigrationError } from './errors';
 
 export const cli = (config: Config): void => {
   const program = new Command();
