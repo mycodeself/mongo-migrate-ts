@@ -7,6 +7,7 @@ import {
   mongoConnect,
 } from '../database';
 import { MigrationObject, loadMigrations } from '../migrations';
+import { ExecuteMigrationError } from '../utils/errors';
 
 interface CommandUpOptions {
   config: Config;
@@ -48,7 +49,10 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
     }
 
     spinner.succeed(`${migrations.length} migrations up`).stop();
+  } catch (e) {
+    await connection.client.close(true);
+    throw new ExecuteMigrationError();
   } finally {
-    connection.client.close();
+    await connection.client.close(true);
   }
 };

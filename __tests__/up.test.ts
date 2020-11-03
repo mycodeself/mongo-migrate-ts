@@ -12,6 +12,7 @@ import {
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
 import { MigrationObject, loadMigrations } from '../lib/migrations';
+import { ExecuteMigrationError } from '../lib/utils/errors';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
 import { oraMock } from './__mocks__/ora.mock';
@@ -77,6 +78,18 @@ describe('up command', () => {
 
     expect(fakeMigrationInstance.up).toBeCalledTimes(migrationsToApply);
     expect(insertMigration).toBeCalledTimes(migrationsToApply);
+    expect(connectionMock.client.close());
+  });
+
+  it('should fail when migrations rejects', async () => {
+    (fakeMigrationInstance.up as jest.Mock).mockReturnValue(
+      new Promise((_, reject) => reject('Error'))
+    );
+
+    const upOperation = () => up({ config: configMock });
+
+    expect(upOperation()).rejects.toBeInstanceOf(ExecuteMigrationError);
+    expect(insertMigration).toBeCalledTimes(0);
     expect(connectionMock.client.close());
   });
 });
