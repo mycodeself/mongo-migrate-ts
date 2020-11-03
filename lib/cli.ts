@@ -41,10 +41,8 @@ export const cli = (config: Config): void => {
       try {
         await up({ config });
       } catch (e) {
-        if (e instanceof ExecuteMigrationError) {
-          process.exitCode = 1;
-        }
         console.error(e);
+        process.exitCode = 1;
       } finally {
         process.exit();
       }
