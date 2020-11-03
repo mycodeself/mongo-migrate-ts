@@ -12,7 +12,7 @@ import {
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
 import { MigrationObject, loadMigrations } from '../lib/migrations';
-import { ExecuteMigrationError } from '../lib/utils/errors';
+import { ExecuteMigrationError } from '../lib/errors';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
 import { oraMock } from './__mocks__/ora.mock';

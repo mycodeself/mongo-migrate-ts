@@ -7,7 +7,7 @@ import {
   mongoConnect,
 } from '../database';
 import { MigrationObject, loadMigrations } from '../migrations';
-import { ExecuteMigrationError } from '../utils/errors';
+import { ExecuteMigrationError } from '../errors';
 
 interface CommandUpOptions {
   config: Config;
