@@ -5,9 +5,10 @@ import {
   MigrationModel,
   insertMigration,
   mongoConnect,
+  DatabaseConnection,
 } from '../database';
 import { MigrationObject, loadMigrations } from '../migrations';
-import { ExecuteMigrationError } from '../errors';
+import { ExecuteMigrationError, DbConnectionError } from '../errors';
 
 interface CommandUpOptions {
   config: Config;
@@ -21,7 +22,12 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
     migrationsCollection,
     migrationsDir,
   } = processConfig(opts.config);
-  const connection = await mongoConnect(uri, database, options);
+  let connection: DatabaseConnection;
+  try {
+    connection = await mongoConnect(uri, database, options);
+  } catch (e) {
+    throw new DbConnectionError(e);
+  }
   const spinner = ora('Migrations up').start();
 
   try {
@@ -43,15 +49,20 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
       const localSpinner = ora(
         `Applying migration ${migration.className}`
       ).start();
-      await migration.instance.up(connection.db);
-      await insertMigration(collection, migration);
-      localSpinner.succeed(`Migration ${migration.className} up`).stop();
+      try {
+        await migration.instance.up(connection.db);
+        await insertMigration(collection, migration);
+        localSpinner.succeed(`Migration ${migration.className} up`).stop();
+      } catch (e) {
+        localSpinner.fail(`Error executing migration ${migration.className}`);
+        throw new ExecuteMigrationError(e);
+      }
     }
-
     spinner.succeed(`${migrations.length} migrations up`).stop();
   } catch (e) {
+    spinner.fail('Error executing migrations');
     await connection.client.close(true);
-    throw new ExecuteMigrationError();
+    throw e;
   } finally {
     await connection.client.close(true);
   }
