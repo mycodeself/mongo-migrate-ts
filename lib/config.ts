@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
 
@@ -40,11 +41,14 @@ export const readConfigFromFile = (filePath: string): Config => {
   return config;
 };
 
+export const getCurrentWorkingDirectory = (): string =>
+  process.env.PWD || process.cwd()
+
 export const getDefaultConfigPath = (): string =>
-  `${process.env.PWD}/${DEFAULT_CONFIG_FILENAME}`;
+  path.join(getCurrentWorkingDirectory(), DEFAULT_CONFIG_FILENAME);
 
 export const getDefaultMigrationsDir = (): string =>
-  `${process.env.PWD}/${DEFAULT_MIGRATIONS_DIR}`;
+  path.join(getCurrentWorkingDirectory(), DEFAULT_MIGRATIONS_DIR);
 
 const getConfigFromEnv = (
   config: Config

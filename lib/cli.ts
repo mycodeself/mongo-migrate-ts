@@ -4,9 +4,13 @@ import { init } from './commands/init';
 import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
-import { Config } from './config';
+import { Config,getDefaultConfigPath, readConfigFromFile } from './config';
 
-export const cli = (config: Config): void => {
+export const getConfig = (): Config => {
+  return readConfigFromFile(getDefaultConfigPath());
+}
+
+export const cli = (): void => {
   const program = new Command();
 
   program
@@ -22,6 +26,7 @@ export const cli = (config: Config): void => {
     .storeOptionsAsProperties(false)
     .option('-n, --name <name>', 'the migration name')
     .action((cmd: Command) => {
+      const config = getConfig()
       const opts = cmd.opts();
 
       let name = opts.name;
@@ -37,6 +42,7 @@ export const cli = (config: Config): void => {
     .command('up')
     .description('Run all pending migrations')
     .action(async () => {
+      const config = getConfig()
       try {
         await up({ config });
       } catch (e) {
@@ -53,6 +59,7 @@ export const cli = (config: Config): void => {
     .option('-l, --last', 'Undo the last applied migration')
     .option('-a, --all', 'Undo all applied migrations')
     .action((cmd: Command) => {
+      const config = getConfig()
       const opts = cmd.opts();
       if (!opts.last && !opts.all) {
         cmd.outputHelp();
@@ -69,6 +76,7 @@ export const cli = (config: Config): void => {
     .command('status')
     .description('Show the status of the migrations')
     .action(() => {
+      const config = getConfig()
       status({ config });
     });
 
