@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: circleci/node:14.17
+      - image: cimg/node:14.17
 
 jobs:
   build:
