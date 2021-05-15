@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-import { getDefaultConfigPath } from '../config';
+import * as path from 'path';
+import { getDefaultConfigPath, getCurrentWorkingDirectory } from '../config';
 import ora from 'ora';
 
 const initConfig = {
@@ -16,7 +17,10 @@ const initConfig = {
 export const init = (): void => {
   const configPath = getDefaultConfigPath();
   const spinner = ora('Initializing config').start();
-  const migrationsDir = `${process.env.PWD}/${initConfig.migrationsDir}`;
+  const migrationsDir = path.join(
+    getCurrentWorkingDirectory(),
+    initConfig.migrationsDir
+  );
 
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);
