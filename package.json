@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "ts-node bin/index.ts",
     "build": "yarn clean && tsc",
-    "lint": "eslint -c .eslintrc 'lib/**/*.ts' --fix",
+    "lint": "eslint -c .eslintrc './lib/**/*.ts' --fix",
     "test": "jest",
     "clean": "rimraf dist",
     "release": "semantic-release"
