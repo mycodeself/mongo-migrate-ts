@@ -1,8 +1,11 @@
 jest.mock('../lib/database');
 jest.mock('../lib/migrations');
-jest.mock('ora');
 
-import ora from 'ora';
+import { oraMock } from './__mocks__/ora.mock';
+jest.mock('ora', () => {
+  return jest.fn().mockImplementation(oraMock);
+});
+
 import { down } from '../lib/commands/down';
 import {
   deleteMigration,
@@ -15,7 +18,6 @@ import { MigrationInterface } from '../lib/MigrationInterface';
 import { loadMigrationFile } from '../lib/migrations';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
-import { oraMock } from './__mocks__/ora.mock';
 
 describe('down command', () => {
   const numberOfMigrations = 10;
@@ -26,7 +28,7 @@ describe('down command', () => {
   const fakeMigrations: MigrationModel[] = Array(numberOfMigrations)
     .fill(undefined)
     .map((v: MigrationModel, index: number) => ({
-      id: `${index}`,
+      _id: `${index}`,
       className: `MigrationTest${index}`,
       file: `MigrationTest${index}.ts`,
       timestamp: +new Date(),
@@ -39,8 +41,6 @@ describe('down command', () => {
   (getAppliedMigrations as jest.Mock).mockReturnValue(
     new Promise((resolve) => resolve(fakeMigrations))
   );
-
-  ((ora as unknown) as jest.Mock).mockImplementation(oraMock);
 
   (loadMigrationFile as jest.Mock).mockImplementation((file: string) => [
     {

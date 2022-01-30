@@ -22,4 +22,16 @@ describe('getDbFormUri', () => {
 
     expect(db).toBe(undefined);
   });
+  it('should parse uri with replica set', () => {
+    const uri = 'mongodb://mongo1:27017,mongo2:27017,mongo3:27017/mydb?replicaSet=replset0';
+    const db = getDbFromUri(uri);
+
+    expect(db).toBe('mydb');
+  })
+  it('should parse uri with replica set in mongo srv format', () => {
+    const uri = 'mongodb+srv://mongo1:27017,mongo2:27017,mongo3:27017/mydb?replicaSet=replset0';
+    const db = getDbFromUri(uri);
+
+    expect(db).toBe('mydb');    
+  })
 });

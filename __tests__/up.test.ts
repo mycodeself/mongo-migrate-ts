@@ -1,8 +1,11 @@
 jest.mock('../lib/database');
 jest.mock('../lib/migrations');
-jest.mock('ora');
 
-import ora from 'ora';
+import { oraMock } from './__mocks__/ora.mock';
+jest.mock('ora', () => {
+  return jest.fn().mockImplementation(oraMock);
+});
+
 import { up } from '../lib/commands/up';
 import {
   getAppliedMigrations,
@@ -15,7 +18,6 @@ import { MigrationObject, loadMigrations } from '../lib/migrations';
 import { ExecuteMigrationError } from '../lib/errors';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
-import { oraMock } from './__mocks__/ora.mock';
 
 describe('up command', () => {
   const numberOfMigrations = 10;
@@ -48,8 +50,6 @@ describe('up command', () => {
     (getAppliedMigrations as jest.Mock).mockReturnValue(
       new Promise((resolve) => resolve([]))
     );
-
-    ((ora as unknown) as jest.Mock).mockImplementation(oraMock);
 
     await up({ config: configMock });
 

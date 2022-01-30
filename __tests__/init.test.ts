@@ -1,4 +1,10 @@
 jest.mock('fs');
+
+import { oraMock } from './__mocks__/ora.mock';
+jest.mock('ora', () => {
+  return jest.fn().mockImplementation(oraMock);
+});
+
 import * as fs from 'fs';
 import { init } from '../lib/commands/init';
 
