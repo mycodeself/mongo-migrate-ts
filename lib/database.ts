@@ -1,13 +1,15 @@
-import { Collection, Db, MongoClient, MongosOptions } from 'mongodb';
+import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb';
 import { MigrationObject } from './migrations';
 
 export interface DatabaseConnection {
   client: MongoClient;
   db: Db;
+  getMigrationsCollection: (
+    collectionName: string
+  ) => Collection<MigrationModel>;
 }
 
 export interface MigrationModel {
-  id: string;
   file: string;
   className: string;
   timestamp: number;
@@ -16,19 +18,24 @@ export interface MigrationModel {
 export const mongoConnect = async (
   uri: string,
   database: string,
-  options?: MongosOptions
+  options?: MongoClientOptions
 ): Promise<DatabaseConnection> => {
-  const client = await MongoClient.connect(uri, options);
+  const client = options
+    ? await MongoClient.connect(uri, options)
+    : await MongoClient.connect(uri);
   const db = client.db(database);
 
   return {
     client,
     db,
+    getMigrationsCollection: (collectionName: string) => {
+      return db.collection<MigrationModel>(collectionName);
+    },
   };
 };
 
 export const insertMigration = async (
-  collection: Collection,
+  collection: Collection<MigrationModel>,
   migration: MigrationObject
 ) => {
   await collection.insertOne({
@@ -39,7 +46,7 @@ export const insertMigration = async (
 };
 
 export const deleteMigration = async (
-  collection: Collection,
+  collection: Collection<MigrationModel>,
   migration: MigrationObject
 ) => {
   await collection.deleteOne({
@@ -48,13 +55,13 @@ export const deleteMigration = async (
 };
 
 export const getAppliedMigrations = (
-  collection: Collection
+  collection: Collection<MigrationModel>
 ): Promise<MigrationModel[]> => {
   return collection.find().sort({ timestamp: -1 }).toArray();
 };
 
 export const getLastAppliedMigration = (
-  collection: Collection
-): Promise<MigrationModel> => {
+  collection: Collection<MigrationModel>
+): Promise<MigrationModel | null> => {
   return collection.find({}).sort({ timestamp: -1 }).limit(1).next();
 };

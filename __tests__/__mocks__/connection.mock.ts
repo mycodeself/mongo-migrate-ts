@@ -1,8 +1,9 @@
 export const connectionMock = {
   db: {
-    collection: jest.fn()
+    collection: jest.fn(),
   },
   client: {
-    close: jest.fn()
-  }
+    close: jest.fn(),
+  },
+  getMigrationsCollection: jest.fn(),
 };

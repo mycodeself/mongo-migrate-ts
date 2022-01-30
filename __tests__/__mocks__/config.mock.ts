@@ -1,10 +1,9 @@
-export const configMock = {
+import { Config } from "../../lib/config";
+
+export const configMock: Config = {
   uri: 'mongodb://username:password@host:27017',
   database: 'db',
-  options: {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  },
+  options: {},
   migrationsDir: 'migrations',
   migrationsCollection: 'migrations_changelog'
 };

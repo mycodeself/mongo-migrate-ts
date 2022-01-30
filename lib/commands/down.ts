@@ -19,7 +19,7 @@ interface CommandDownOptions {
 
 const downLastAppliedMigration = async (
   connection: DatabaseConnection,
-  collection: Collection
+  collection: Collection<MigrationModel>
 ): Promise<void> => {
   const spinner = ora(`Undoing last migration`).start();
   const lastApplied = await getLastAppliedMigration(collection);
@@ -46,7 +46,7 @@ const downLastAppliedMigration = async (
 
 const downAll = async (
   connection: DatabaseConnection,
-  collection: Collection
+  collection: Collection<MigrationModel>
 ): Promise<void> => {
   const spinner = ora(`Undoing all migrations`).start();
   const appliedMigrations = await getAppliedMigrations(collection);
@@ -85,11 +85,10 @@ export const down = async ({
   mode,
   config,
 }: CommandDownOptions): Promise<void> => {
-  const { uri, database, options, migrationsCollection } = processConfig(
-    config
-  );
+  const { uri, database, options, migrationsCollection } =
+    processConfig(config);
   const connection = await mongoConnect(uri, database, options);
-  const collection = connection.db.collection(migrationsCollection);
+  const collection = connection.getMigrationsCollection(migrationsCollection);
   try {
     switch (mode) {
       case 'all':

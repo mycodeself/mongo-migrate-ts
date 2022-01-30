@@ -15,13 +15,8 @@ interface CommandUpOptions {
 }
 
 export const up = async (opts: CommandUpOptions): Promise<void> => {
-  const {
-    uri,
-    database,
-    options,
-    migrationsCollection,
-    migrationsDir,
-  } = processConfig(opts.config);
+  const { uri, database, options, migrationsCollection, migrationsDir } =
+    processConfig(opts.config);
   let connection: DatabaseConnection;
   try {
     connection = await mongoConnect(uri, database, options);
@@ -31,7 +26,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
   const spinner = ora('Migrations up').start();
 
   try {
-    const collection = connection.db.collection(migrationsCollection);
+    const collection = connection.getMigrationsCollection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
     const migrations = (await loadMigrations(migrationsDir)).filter(
       (migration: MigrationObject) =>

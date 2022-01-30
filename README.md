@@ -8,7 +8,7 @@ Based on migrate-mongo (https://github.com/seppevs/migrate-mongo/), but with Typ
 
 ## Installation
 
-Its simple
+Install using your favourite package manager, example using npm
 
 ```
 npm install mongo-migrate-ts
@@ -48,9 +48,6 @@ mongoMigrateCli({
   database: 'db',
   migrationsDir: __dirname,
   migrationsCollection: 'migrations_collection',
-  options: {
-    useUnifiedTopology: true
-  }
 });
 ```
 
@@ -110,7 +107,7 @@ ts-node migrations/index.ts up
     databaseVar?: string;
   };
   // Specific configuration of mongodb client
-  // (see https://mongodb.github.io/node-mongodb-native/3.3/api/MongoClient.html)
+  // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
 }
 ```
@@ -120,9 +117,6 @@ Example configuration in json
 ```json
 {
   "uri": "mongodb://admin:admin@127.0.0.1:27017/mydb?authSource=admin",
-  "migrationsDir": "migrations",
-  "options": {
-    "useUnifiedTopology": true
-  }
+  "migrationsDir": "migrations"
 }
 ```
