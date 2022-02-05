@@ -2,7 +2,14 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: cimg/node:14.17
+      - image: cimg/node:16.13
+  node-with-mongo:
+    docker:
+      - image: cimg/node:16.13
+      - image: circleci/mongo:5.0
+        environment:
+          MONGO_USERNAME: admin
+          MONGO_PASSWORD: admin
 
 jobs:
   build:
@@ -22,6 +29,14 @@ jobs:
           at: .
       - run: yarn test
 
+  test-example:
+    executor: node-with-mongo
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn ts-node examples/cli.ts up
+      - run: yarn ts-node examples/cli.ts down --all
+
   release:
     executor: node
     steps:
@@ -36,10 +51,14 @@ workflows:
       - test:
           requires:
             - build
+      - test-example:
+          requires:
+            - build
       - release:
           context: dev
           requires:
             - test
+            - test-example
           filters:
             branches:
               only: master
