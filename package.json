@@ -15,6 +15,7 @@
     "build": "yarn clean && tsc",
     "lint": "eslint -c .eslintrc 'lib/**/*.ts' --fix",
     "test": "jest",
+    "test:ci": "jest --runInBand --ci",
     "clean": "rimraf dist",
     "release": "semantic-release"
   },
