@@ -13,14 +13,6 @@
     "strictNullChecks": true,
     "declaration": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "examples",
-    "__tests__"
-  ],
-  "include": [
-    "lib/**/*",
-    "bin/index.ts"
-  ]
+  "exclude": ["node_modules", "dist", "examples", "__tests__"],
+  "include": ["lib/**/*", "bin/index.ts"]
 }

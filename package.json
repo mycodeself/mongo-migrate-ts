@@ -15,8 +15,10 @@
     "build": "yarn clean && tsc",
     "lint": "eslint -c .eslintrc 'lib/**/*.ts' --fix",
     "test": "jest",
+    "test:ci": "jest --runInBand --ci",
     "clean": "rimraf dist",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "prepare": "husky install"
   },
   "license": "MIT",
   "devDependencies": {
@@ -57,21 +59,15 @@
     "cli-table": "^0.3.11",
     "commander": "^9.0.0",
     "connection-string": "^4.3.5",
-    "ora": "^6.0.1"
+    "ora": "^5.4.1"
   },
   "peerDependencies": {
     "mongodb": "4.x.x"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{ts,js}": [
-      "yarn lint --quiet",
-      "prettier --write",
-      "git add"
+      "yarn lint",
+      "prettier --write"
     ]
   }
 }

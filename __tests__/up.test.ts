@@ -88,7 +88,7 @@ describe('up command', () => {
 
     const upOperation = () => up({ config: configMock });
 
-    expect(upOperation()).rejects.toBeInstanceOf(ExecuteMigrationError);
+    expect(upOperation()).rejects.toThrow(ExecuteMigrationError);
     expect(insertMigration).toBeCalledTimes(0);
     expect(connectionMock.client.close());
   });

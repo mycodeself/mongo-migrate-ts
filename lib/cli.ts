@@ -21,9 +21,7 @@ export const cli = (config: Config): void => {
     .description('Create a new migration file under migrations directory')
     .storeOptionsAsProperties(false)
     .option('-n, --name <name>', 'the migration name')
-    .action((cmd: Command) => {
-      const opts = cmd.opts();
-
+    .action((opts) => {
       let name = opts.name;
 
       if (typeof opts.name !== 'string' || opts.name.length === 0) {
@@ -52,10 +50,9 @@ export const cli = (config: Config): void => {
     .description('Undo migrations')
     .option('-l, --last', 'Undo the last applied migration')
     .option('-a, --all', 'Undo all applied migrations')
-    .action((cmd: Command) => {
-      const opts = cmd.opts();
+    .action((opts) => {
       if (!opts.last && !opts.all) {
-        cmd.outputHelp();
+        program.outputHelp();
         process.exit(-1);
       }
 
@@ -72,5 +69,5 @@ export const cli = (config: Config): void => {
       status({ config });
     });
 
-  program.parse(process.argv);
+  program.parse();
 };
