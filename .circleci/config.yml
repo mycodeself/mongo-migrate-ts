@@ -27,7 +27,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: yarn test
+      - run: yarn test:ci
 
   test-example:
     executor: node-with-mongo
