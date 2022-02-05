@@ -28,6 +28,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: yarn test:ci
+      - run: yarn audit --level high --no-progress --frozen-lockfile
 
   test-example:
     executor: node-with-mongo
