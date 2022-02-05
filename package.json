@@ -17,7 +17,8 @@
     "test": "jest",
     "test:ci": "jest --runInBand --ci",
     "clean": "rimraf dist",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "prepare": "husky install"
   },
   "license": "MIT",
   "devDependencies": {
@@ -62,11 +63,6 @@
   },
   "peerDependencies": {
     "mongodb": "4.x.x"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{ts,js}": [

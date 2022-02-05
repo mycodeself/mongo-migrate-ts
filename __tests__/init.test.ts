@@ -24,6 +24,7 @@ describe('init command', () => {
     mkdirSyncSpy.mockReset();
     writeFileSyncSpy.mockReset();
     (fs.existsSync as jest.Mock).mockReturnValue(true);
+
     init();
 
     expect(mkdirSyncSpy).toHaveBeenCalledTimes(0);
