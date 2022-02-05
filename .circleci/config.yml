@@ -8,8 +8,8 @@ executors:
       - image: cimg/node:16.13
       - image: circleci/mongo:5.0
         environment:
-          MONGO_USERNAME: admin
-          MONGO_PASSWORD: admin
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: admin
 
 jobs:
   build:
