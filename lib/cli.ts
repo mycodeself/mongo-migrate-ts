@@ -6,8 +6,11 @@ import { status } from './commands/status';
 import { up } from './commands/up';
 import { Config } from './config';
 
-export const cli = (config: Config): void => {
+export const cli = (config?: Config): void => {
   const program = new Command();
+  if (!config) {
+    console.log('No config found. Please run `init` before continuing');
+  }
 
   program
     .command('init')
@@ -15,59 +18,63 @@ export const cli = (config: Config): void => {
     .action(() => {
       init();
     });
+  if (config) {
+    program
+      .command('new')
+      .description('Create a new migration file under migrations directory')
+      .storeOptionsAsProperties(false)
+      .option('-n, --name <name>', 'the migration name')
+      .action((opts) => {
+        let name = opts.name;
 
-  program
-    .command('new')
-    .description('Create a new migration file under migrations directory')
-    .storeOptionsAsProperties(false)
-    .option('-n, --name <name>', 'the migration name')
-    .action((opts) => {
-      let name = opts.name;
+        if (typeof opts.name !== 'string' || opts.name.length === 0) {
+          name = undefined;
+        }
 
-      if (typeof opts.name !== 'string' || opts.name.length === 0) {
-        name = undefined;
-      }
-
-      newCommand({ migrationName: name, migrationsDir: config.migrationsDir });
-    });
-
-  program
-    .command('up')
-    .description('Run all pending migrations')
-    .action(async () => {
-      try {
-        await up({ config });
-      } catch (e) {
-        console.error(e);
-        process.exitCode = 1;
-      } finally {
-        process.exit();
-      }
-    });
-
-  program
-    .command('down')
-    .description('Undo migrations')
-    .option('-l, --last', 'Undo the last applied migration')
-    .option('-a, --all', 'Undo all applied migrations')
-    .action((opts) => {
-      if (!opts.last && !opts.all) {
-        program.outputHelp();
-        process.exit(-1);
-      }
-
-      down({
-        config,
-        mode: opts.last ? 'last' : 'all',
+        newCommand({
+          migrationName: name,
+          migrationsDir: config.migrationsDir,
+        });
       });
-    });
 
-  program
-    .command('status')
-    .description('Show the status of the migrations')
-    .action(() => {
-      status({ config });
-    });
+    program
+      .command('up')
+      .description('Run all pending migrations')
+      .action(async () => {
+        try {
+          await up({ config });
+        } catch (e) {
+          console.error(e);
+          process.exitCode = 1;
+        } finally {
+          process.exit();
+        }
+      });
+
+    program
+      .command('down')
+      .description('Undo migrations')
+      .option('-l, --last', 'Undo the last applied migration')
+      .option('-a, --all', 'Undo all applied migrations')
+      .action((opts) => {
+        if (!opts.last && !opts.all) {
+          program.outputHelp();
+          process.exit(-1);
+        }
+
+        down({
+          config,
+          mode: opts.last ? 'last' : 'all',
+        });
+      });
+
+    program
+      .command('status')
+      .description('Show the status of the migrations')
+      .action(() => {
+        status({ config });
+      });
+  }
 
   program.parse();
 };
