@@ -2,7 +2,7 @@
 
 import { cli } from '../lib/cli';
 import { getDefaultConfigPath, readConfigFromFile } from '../lib/config';
-import { ConfigFileNotFoundError } from '../lib/errors/ConfigFileNotFoundError';
+import { ConfigFileNotFoundError } from '../lib/errors';
 
 try {
   const config = readConfigFromFile(getDefaultConfigPath());

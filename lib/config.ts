@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
-import { ConfigFileNotFoundError } from './errors/ConfigFileNotFoundError';
+import { ConfigFileNotFoundError } from './errors';
 import * as path from 'path';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
