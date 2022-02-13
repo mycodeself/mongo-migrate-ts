@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
+import { ConfigFileNotFoundError } from './errors';
 import * as path from 'path';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
@@ -32,7 +33,7 @@ export interface Config {
 
 export const readConfigFromFile = (filePath: string): Config => {
   if (!fs.existsSync(filePath)) {
-    throw new Error(`Config file ${filePath} not found.`);
+    throw new ConfigFileNotFoundError(`Config file ${filePath} not found.`);
   }
 
   const rawConfig = fs.readFileSync(filePath).toString();
