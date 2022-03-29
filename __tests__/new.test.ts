@@ -88,4 +88,27 @@ describe('new command', () => {
       defaultTemplateText
     );
   });
+
+  it('should use the default template text if no template file provided', () => {
+    const defaultTemplateText = 'default template file contents';
+
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(
+      defaultTemplateText
+    );
+
+    newModule.newCommand({
+      migrationsDir: configMock.migrationsDir,
+    });
+
+    const fileName = `${+new Date()}_Migration`;
+
+    const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
+
+    expect(defaultTemplateSpy).toHaveBeenCalled();
+    expect(writeFileSyncSpy).toHaveBeenCalledWith(
+      expectedMigrationsPath,
+      defaultTemplateText
+    );
+  });
 });
