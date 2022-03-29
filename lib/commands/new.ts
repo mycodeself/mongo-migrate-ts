@@ -29,7 +29,6 @@ export const newCommand = (opts: CommandNewOptions): string => {
   let template: string;
   const fileName = `${+new Date()}_${migrationName || 'Migration'}`;
   const className = `${migrationName || 'Migration'}${+new Date()}`;
-  console.log(templateFile);
 
   if (templateFile && fs.existsSync(templateFile)) {
     template = fs.readFileSync(templateFile).toString();
