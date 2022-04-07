@@ -19,6 +19,7 @@ describe('new command', () => {
   beforeEach(() => {
     mkdirSyncSpy.mockReset();
     writeFileSyncSpy.mockReset();
+    defaultTemplateSpy.mockReset();
   });
 
   it('should create a new migration file', () => {
@@ -65,28 +66,13 @@ describe('new command', () => {
     );
   });
 
-  it('should use the default template text if template file does not exist', () => {
-    const defaultTemplateText = 'default template file contents';
-
+  it('should throw error if provided template file does not exist', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(
-      defaultTemplateText
-    );
 
-    newModule.newCommand({
-      migrationsDir: configMock.migrationsDir,
-      templateFile: 'doesNotExist.ts',
-    });
+    expect(newModule.newCommand).toThrowError();
 
-    const fileName = `${+new Date()}_Migration`;
-
-    const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
-
-    expect(defaultTemplateSpy).toHaveBeenCalled();
-    expect(writeFileSyncSpy).toHaveBeenCalledWith(
-      expectedMigrationsPath,
-      defaultTemplateText
-    );
+    expect(defaultTemplateSpy).not.toHaveBeenCalled();
+    expect(writeFileSyncSpy).not.toHaveBeenCalled();
   });
 
   it('should use the default template text if no template file provided', () => {
