@@ -21,10 +21,18 @@ export class ${className} implements MigrationInterface {
 `;
 };
 
-export const getMigrationTemplate = (templateFile?: string) => {
-  if (templateFile && fs.existsSync(templateFile)) {
+export const getMigrationTemplate = (
+  className: string,
+  templateFile?: string
+) => {
+  if (!templateFile) {
+    return defaultMigrationTemplate(className);
+  }
+
+  if (fs.existsSync(templateFile)) {
     return fs.readFileSync(templateFile).toString();
   }
+
   throw new TemplateFileNotFoundError(
     `Template file ${templateFile} not found`
   );
@@ -36,15 +44,10 @@ export const newCommand = (opts: CommandNewOptions): string => {
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);
   }
-  let template: string;
   const fileName = `${+new Date()}_${migrationName || 'Migration'}`;
   const className = `${migrationName || 'Migration'}${+new Date()}`;
 
-  if (!templateFile) {
-    template = defaultMigrationTemplate(className);
-  } else {
-    template = getMigrationTemplate(templateFile);
-  }
+  const template: string = getMigrationTemplate(className, templateFile);
 
   const migrationPath = `${migrationsDir}/${fileName}.ts`;
 
