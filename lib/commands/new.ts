@@ -24,7 +24,7 @@ export class ${className} implements MigrationInterface {
 export const getMigrationTemplate = (
   className: string,
   templateFile?: string
-) => {
+): string => {
   if (!templateFile) {
     return defaultMigrationTemplate(className);
   }
@@ -47,7 +47,7 @@ export const newCommand = (opts: CommandNewOptions): string => {
   const fileName = `${+new Date()}_${migrationName || 'Migration'}`;
   const className = `${migrationName || 'Migration'}${+new Date()}`;
 
-  const template: string = getMigrationTemplate(className, templateFile);
+  const template = getMigrationTemplate(className, templateFile);
 
   const migrationPath = `${migrationsDir}/${fileName}.ts`;
 
