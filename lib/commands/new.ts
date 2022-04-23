@@ -30,7 +30,8 @@ export const getMigrationTemplate = (
   }
 
   if (fs.existsSync(templateFile)) {
-    return fs.readFileSync(templateFile).toString();
+    const template: string = fs.readFileSync(templateFile).toString();
+    return template.replace(/class (\S*) /, `class ${className} `);
   }
 
   throw new TemplateFileNotFoundError(

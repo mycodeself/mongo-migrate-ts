@@ -46,23 +46,25 @@ describe('new command', () => {
     expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 
-  it('should create the migration using a template if the provided file exists', () => {
-    const templateFileText = 'custom template file contents';
+  it('should create the migration using a template if the provided file exists and replace the class name', () => {
+    const templateFileText = 'class custom template file contents';
 
     (fs.existsSync as jest.Mock).mockReturnValue(true);
     (fs.readFileSync as jest.Mock).mockReturnValue(templateFileText);
 
+    const newDate = +new Date();
     const templateFile = 'testFile.ts';
     newModule.newCommand({
       migrationsDir: configMock.migrationsDir,
       templateFile: templateFile,
     });
-    const fileName = `${+new Date()}_Migration`;
+    const fileName = `${newDate}_Migration`;
     const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
+    const expectedTemplateFileText = `class Migration${newDate} template file contents`;
 
     expect(writeFileSyncSpy).toHaveBeenCalledWith(
       expectedMigrationsPath,
-      templateFileText
+      expectedTemplateFileText
     );
   });
 
