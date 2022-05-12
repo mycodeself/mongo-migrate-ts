@@ -24,16 +24,26 @@ export const cli = (config?: Config): void => {
       .description('Create a new migration file under migrations directory')
       .storeOptionsAsProperties(false)
       .option('-n, --name <name>', 'the migration name')
+      .option('-t, --template-file <path>', 'The template file to use')
       .action((opts) => {
         let name = opts.name;
+        let templateFile = opts.templateFile;
 
         if (typeof opts.name !== 'string' || opts.name.length === 0) {
           name = undefined;
         }
 
+        if (
+          typeof opts.templateFile !== 'string' ||
+          opts.templateFile.length === 0
+        ) {
+          templateFile = undefined;
+        }
+
         newCommand({
           migrationName: name,
           migrationsDir: config.migrationsDir,
+          templateFile: templateFile,
         });
       });
 
