@@ -39,7 +39,7 @@ const downLastAppliedMigration = async (
     throw new Error(`Migration (${lastApplied.className}) not found`);
   }
 
-  await migration.instance.down(connection.db);
+  await migration.instance.down(connection.db, connection.client)
   await deleteMigration(collection, migration);
   spinner.succeed(`Migration ${lastApplied.className} down`).stop();
 };
@@ -73,7 +73,7 @@ const downAll = async (
     const localSpinner = ora(
       `Undoing migration ${migration.className}`
     ).start();
-    await migration.instance.down(connection.db);
+    await migration.instance.down(connection.db, connection.client);
     await deleteMigration(collection, migration);
     localSpinner.succeed(`Migration ${migration.className} down`).stop();
   }
