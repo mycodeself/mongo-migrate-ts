@@ -1,4 +1,4 @@
-import cliTable from 'cli-table';
+import CliTable from 'cli-table';
 import { Config, processConfig } from '../config';
 import {
   getAppliedMigrations,
@@ -11,7 +11,7 @@ interface CommandStatusOptions {
   config: Config;
 }
 
-export const status = async (opts: CommandStatusOptions) => {
+export const status = async (opts: CommandStatusOptions): Promise<void> => {
   const { uri, database, options, migrationsCollection, migrationsDir } =
     processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
@@ -27,12 +27,12 @@ export const status = async (opts: CommandStatusOptions) => {
         ) === undefined
     );
 
-    const table = new cliTable({
+    const table = new CliTable({
       head: ['Migration', 'Status', 'Timestamp'],
     });
 
     appliedMigrations.map((migration: MigrationModel) => {
-      table.push([migration.className, 'up', migration.timestamp]);
+      table.push([migration.className, 'up', String(migration.timestamp)]);
     });
 
     notAppliedMigrations.map((migration: MigrationObject) => {
@@ -41,6 +41,6 @@ export const status = async (opts: CommandStatusOptions) => {
 
     console.log(table.toString());
   } finally {
-    connection.client.close();
+    await connection.client.close();
   }
 };
