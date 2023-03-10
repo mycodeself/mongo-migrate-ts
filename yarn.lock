@@ -2057,7 +2057,7 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/cli-table@^0.3.0":
+"@types/cli-table@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@types/cli-table/-/cli-table-0.3.1.tgz#a0ae06290284f7abebb90a2ddc0187de6d22e963"
   integrity sha512-m3+6WWfSSl6zqoXy8uQQifbgqV7Gt6fsyWnHLgUWVtJQk75+OfUB+edSZ52YDj7leSiZtX7w1/E4w2x/Hb0orA==
