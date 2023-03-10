@@ -29,10 +29,11 @@ export const status = async (opts: CommandStatusOptions) => {
 
     const table = new cliTable({
       head: ['Migration', 'Status', 'Timestamp'],
+      colWidths: [100, 200],
     });
 
     appliedMigrations.map((migration: MigrationModel) => {
-      table.push([migration.className, 'up', migration.timestamp]);
+      table.push([migration.className, 'up', migration.timestamp.toString()]);
     });
 
     notAppliedMigrations.map((migration: MigrationObject) => {
