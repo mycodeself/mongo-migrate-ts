@@ -9,6 +9,7 @@ import {
   MigrationModel,
   mongoConnect,
 } from '../database';
+import { ExecuteMigrationError } from '../errors';
 import { MigrationObject, loadMigrationFile } from '../migrations';
 import { flatArray } from '../utils/flatArray';
 
@@ -38,10 +39,14 @@ const downLastAppliedMigration = async (
   if (!migration) {
     throw new Error(`Migration (${lastApplied.className}) not found`);
   }
-
-  await migration.instance.down(connection.db);
-  await deleteMigration(collection, migration);
-  spinner.succeed(`Migration ${lastApplied.className} down`).stop();
+  try {
+    await migration.instance.down(connection.db);
+    await deleteMigration(collection, migration);
+    spinner.succeed(`Migration ${lastApplied.className} down`).stop();
+  } catch (e) {
+    spinner.fail(`Error down migration ${lastApplied.className}`);
+    throw new ExecuteMigrationError(e);
+  }
 };
 
 const downAll = async (
@@ -73,9 +78,14 @@ const downAll = async (
     const localSpinner = ora(
       `Undoing migration ${migration.className}`
     ).start();
-    await migration.instance.down(connection.db);
-    await deleteMigration(collection, migration);
-    localSpinner.succeed(`Migration ${migration.className} down`).stop();
+    try {
+      await migration.instance.down(connection.db);
+      await deleteMigration(collection, migration);
+      localSpinner.succeed(`Migration ${migration.className} down`).stop();
+    } catch (e) {
+      localSpinner.fail(`Error down migration ${migration.className}`);
+      throw new ExecuteMigrationError(e);
+    }
   }
 
   spinner.succeed('All migrations down').stop();
