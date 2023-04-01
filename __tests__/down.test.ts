@@ -18,6 +18,7 @@ import { MigrationInterface } from '../lib/MigrationInterface';
 import { loadMigrationFile } from '../lib/migrations';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
+import { ExecuteMigrationError } from '../lib/errors';
 
 describe('down command', () => {
   const numberOfMigrations = 10;
@@ -73,5 +74,22 @@ describe('down command', () => {
     expect(fakeMigrationInstance.down).toBeCalledTimes(1);
     expect(deleteMigration).toBeCalledTimes(1);
     expect(connectionMock.client.close).toBeCalled();
+  });
+
+  it('should handle exception when migration down fails', async () => {
+    (fakeMigrationInstance.down as jest.Mock).mockReturnValue(
+      new Promise((_, reject) => reject('Error'))
+    );
+
+    type Mode = 'all' | 'last';
+    const modes: Mode[] = ['all', 'last'];
+
+    for await (const mode of modes) {
+      const downOperation = () => down({ mode, config: configMock });
+
+      await expect(downOperation()).rejects.toThrow(ExecuteMigrationError);
+      expect(deleteMigration).toBeCalledTimes(0);
+      expect(connectionMock.client.close());
+    }
   });
 });
