@@ -12,15 +12,23 @@ interface CommandStatusOptions {
 }
 
 export const status = async (opts: CommandStatusOptions) => {
-  const { uri, database, options, migrationsCollection, migrationsDir } =
-    processConfig(opts.config);
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir,
+    fileExt,
+  } = processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
 
     const appliedMigrations = await getAppliedMigrations(collection);
 
-    const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
+    const notAppliedMigrations = (
+      await loadMigrations(migrationsDir, fileExt)
+    ).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(
           (m: MigrationModel) => m.className === migration.className

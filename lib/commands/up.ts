@@ -15,8 +15,14 @@ interface CommandUpOptions {
 }
 
 export const up = async (opts: CommandUpOptions): Promise<void> => {
-  const { uri, database, options, migrationsCollection, migrationsDir } =
-    processConfig(opts.config);
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir,
+    fileExt,
+  } = processConfig(opts.config);
   let connection: DatabaseConnection;
   try {
     connection = await mongoConnect(uri, database, options);
@@ -28,7 +34,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
-    const migrations = (await loadMigrations(migrationsDir)).filter(
+    const migrations = (await loadMigrations(migrationsDir, fileExt)).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(
           (m: MigrationModel) => m.className === migration.className

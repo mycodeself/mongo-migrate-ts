@@ -109,6 +109,10 @@ ts-node migrations/index.ts up
   // Specific configuration of mongodb client
   // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
+
+  // The file extension or suffix of the migrations' filenames
+  // Defaults to .ts
+  fileExt?: string
 }
 ```
 

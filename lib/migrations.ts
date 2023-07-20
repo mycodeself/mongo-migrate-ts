@@ -42,9 +42,14 @@ export const loadMigrationFile = async (
 };
 
 export const loadMigrations = async (
-  migrationsDir: string
+  migrationsDir: string,
+  extension?: string
 ): Promise<MigrationObject[]> => {
-  const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
+  const fileExt = extension
+    ? new RegExp(`\\${extension}$`, 'i')
+    : isTsNode()
+    ? new RegExp(/\.ts$/i)
+    : new RegExp(/\.js$/i);
 
   const migrations = Promise.all(
     fs

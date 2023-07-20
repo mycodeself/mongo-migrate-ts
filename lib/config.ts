@@ -16,6 +16,7 @@ export interface ProcessedConfig {
   migrationsDir: string;
   migrationsCollection: string;
   options?: MongoClientOptions;
+  fileExt?: string;
 }
 
 export interface Config {
@@ -29,6 +30,7 @@ export interface Config {
     databaseVar?: string;
   };
   options?: MongoClientOptions;
+  fileExt?: string;
 }
 
 export const readConfigFromFile = (filePath: string): Config => {
@@ -94,5 +96,6 @@ export const processConfig = (config: Config): ProcessedConfig => {
     migrationsCollection:
       config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
     options: config.options,
+    fileExt: config.fileExt,
   } as ProcessedConfig;
 };
