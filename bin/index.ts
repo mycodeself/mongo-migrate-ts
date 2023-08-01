@@ -12,6 +12,6 @@ try {
     console.warn(`${e.message} Initializing CLI without config.`);
     cli();
   } else {
-    console.error(e);
+    throw e;
   }
 }
