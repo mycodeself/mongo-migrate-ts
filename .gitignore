@@ -6,3 +6,4 @@ migrations.json
 *.log
 coverage
 distexamples
+.idea
