@@ -40,7 +40,7 @@ const downLastAppliedMigration = async (
     throw new Error(`Migration (${lastApplied.className}) not found`);
   }
   try {
-    await migration.instance.down(connection.db);
+    await migration.instance.down(connection.db, connection.client);
     await deleteMigration(collection, migration);
     spinner.succeed(`Migration ${lastApplied.className} down`).stop();
   } catch (e) {
@@ -79,7 +79,7 @@ const downAll = async (
       `Undoing migration ${migration.className}`
     ).start();
     try {
-      await migration.instance.down(connection.db);
+      await migration.instance.down(connection.db, connection.client);
       await deleteMigration(collection, migration);
       localSpinner.succeed(`Migration ${migration.className} down`).stop();
     } catch (e) {
