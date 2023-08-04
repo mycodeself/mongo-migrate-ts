@@ -123,7 +123,7 @@ Example configuration in json
 
 ## Transactions
 
-The `up`` and `down`` methods in migrations have the mongo client available to create a session and use transactions. See example
+The `up` and `down` methods in migrations have the mongo client available to create a session and use transactions. See example
 
 ```typescript
 import { Db, MongoClient } from 'mongodb';
