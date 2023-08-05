@@ -2,5 +2,5 @@
 export const isTsNode = (): boolean => {
   const symbol = Symbol.for('ts-node.register.instance');
 
-  return !!(process as any)[symbol] || !!process.env.TS_NODE_DEV;
+  return Boolean((process as any)[symbol] || process.env.TS_NODE_DEV);
 };

@@ -1,8 +1,8 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
 import { ConfigFileNotFoundError } from './errors';
-import * as path from 'path';
+import path from 'path';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
 const DEFAULT_MIGRATIONS_DIR = 'migrations';
@@ -37,9 +37,7 @@ export const readConfigFromFile = (filePath: string): Config => {
   }
 
   const rawConfig = fs.readFileSync(filePath).toString();
-  const config = JSON.parse(rawConfig) as Config;
-
-  return config;
+  return JSON.parse(rawConfig) as Config;
 };
 
 export const getCurrentWorkingDirectory = (): string =>
@@ -52,7 +50,7 @@ export const getDefaultMigrationsDir = (): string =>
   path.join(getCurrentWorkingDirectory(), DEFAULT_MIGRATIONS_DIR);
 
 const getConfigFromEnv = (
-  config: Config
+  config: Config,
 ): { uri: string; database: string } => {
   const uriVarName =
     (config.environment && config.environment.uriVar) || DEFAULT_ENV_VAR_URI;

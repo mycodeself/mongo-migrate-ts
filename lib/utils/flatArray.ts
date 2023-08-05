@@ -1,2 +1,2 @@
-export const flatArray = (arr: any[][]): any[] =>
+export const flatArray = <T>(arr: T[][]): T[] =>
   [].concat(...(arr as Array<[]>));

@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
 import { isTsNode } from './utils/isTsNode';
@@ -10,18 +10,19 @@ export interface MigrationObject {
   instance: MigrationInterface;
 }
 
-const isMigration = (obj: any): boolean => {
-  return (
+const isMigration = (obj: unknown): boolean => {
+  return Boolean(
     obj &&
-    obj.up &&
-    obj.down &&
-    typeof obj.up === 'function' &&
-    typeof obj.down === 'function'
+      typeof obj === 'object' &&
+      'up' in obj &&
+      'down' in obj &&
+      typeof obj.up === 'function' &&
+      typeof obj.down === 'function',
   );
 };
 
 export const loadMigrationFile = async (
-  filePath: string
+  filePath: string,
 ): Promise<MigrationObject[]> => {
   if (!fs.existsSync(filePath)) {
     throw new Error(`File ${filePath} not exists.`);
@@ -42,7 +43,7 @@ export const loadMigrationFile = async (
 };
 
 export const loadMigrations = async (
-  migrationsDir: string
+  migrationsDir: string,
 ): Promise<MigrationObject[]> => {
   const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
 
@@ -50,11 +51,9 @@ export const loadMigrations = async (
     fs
       .readdirSync(migrationsDir)
       .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`)),
   );
 
   // flat migrations because in one file can be more than one migration
-  const flatMigrations = flatArray(await migrations);
-
-  return flatMigrations;
+  return flatArray(await migrations);
 };

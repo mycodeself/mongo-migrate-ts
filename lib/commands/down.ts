@@ -20,7 +20,7 @@ interface CommandDownOptions {
 
 const downLastAppliedMigration = async (
   connection: DatabaseConnection,
-  collection: Collection<MigrationModel>
+  collection: Collection<MigrationModel>,
 ): Promise<void> => {
   const spinner = ora(`Undoing last migration`).start();
   const lastApplied = await getLastAppliedMigration(collection);
@@ -33,7 +33,7 @@ const downLastAppliedMigration = async (
   spinner.text = `Undoing migration ${lastApplied.className}`;
   const migrationFile = await loadMigrationFile(lastApplied.file);
   const migration = migrationFile.find(
-    (m: MigrationObject) => m.className === lastApplied.className
+    (m: MigrationObject) => m.className === lastApplied.className,
   );
 
   if (!migration) {
@@ -51,7 +51,7 @@ const downLastAppliedMigration = async (
 
 const downAll = async (
   connection: DatabaseConnection,
-  collection: Collection<MigrationModel>
+  collection: Collection<MigrationModel>,
 ): Promise<void> => {
   const spinner = ora(`Undoing all migrations`).start();
   const appliedMigrations = await getAppliedMigrations(collection);
@@ -66,17 +66,17 @@ const downAll = async (
       const m = await loadMigrationFile(migration.file);
       if (m && m.length === 0) {
         throw new Error(
-          `Can undo migration ${migration.className}, no class found`
+          `Can undo migration ${migration.className}, no class found`,
         );
       }
 
       return m;
-    })
+    }),
   );
 
   for await (const migration of flatArray(migrationsToUndo)) {
     const localSpinner = ora(
-      `Undoing migration ${migration.className}`
+      `Undoing migration ${migration.className}`,
     ).start();
     try {
       await migration.instance.down(connection.db, connection.client);
@@ -109,6 +109,6 @@ export const down = async ({
         break;
     }
   } finally {
-    connection.client.close();
+    await connection.client.close();
   }
 };

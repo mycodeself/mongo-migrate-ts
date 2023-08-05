@@ -7,7 +7,5 @@ export const getDbFromUri = (uri: string): string | undefined => {
     return;
   }
 
-  const db = parseUri.path[0];
-
-  return db;
+  return parseUri.path[0];
 };

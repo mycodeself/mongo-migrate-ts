@@ -6,7 +6,7 @@ import { status } from './commands/status';
 import { up } from './commands/up';
 import { Config } from './config';
 
-export const cli = (config?: Config): void => {
+export const cli = async (config?: Config): Promise<void> => {
   const program = new Command();
   if (!config) {
     console.log('No config found. Please run `init` before continuing');
@@ -66,13 +66,13 @@ export const cli = (config?: Config): void => {
       .description('Undo migrations')
       .option('-l, --last', 'Undo the last applied migration')
       .option('-a, --all', 'Undo all applied migrations')
-      .action((opts) => {
+      .action(async (opts) => {
         if (!opts.last && !opts.all) {
           program.outputHelp();
           process.exit(-1);
         }
 
-        down({
+        return down({
           config,
           mode: opts.last ? 'last' : 'all',
         });

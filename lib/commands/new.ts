@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import { TemplateFileNotFoundError } from '../errors';
 
 interface CommandNewOptions {
@@ -23,7 +23,7 @@ export class ${className} implements MigrationInterface {
 
 export const getMigrationTemplate = (
   className: string,
-  templateFile?: string
+  templateFile?: string,
 ): string => {
   if (!templateFile) {
     return defaultMigrationTemplate(className);
@@ -35,7 +35,7 @@ export const getMigrationTemplate = (
   }
 
   throw new TemplateFileNotFoundError(
-    `Template file ${templateFile} not found`
+    `Template file ${templateFile} not found`,
   );
 };
 
