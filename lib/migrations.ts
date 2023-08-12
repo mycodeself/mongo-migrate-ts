@@ -56,6 +56,7 @@ export const loadMigrations = async (
         ...(globOptions ?? {}),
       })
       .map((path) => (typeof path === 'string' ? path : path.fullpath()))
+      .sort()
       .map((file) => loadMigrationFile(migrationsDir + '/' + file))
   );
 
