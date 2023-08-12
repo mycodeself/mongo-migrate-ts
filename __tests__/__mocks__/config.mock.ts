@@ -6,5 +6,4 @@ export const configMock: Config = {
   options: {},
   migrationsDir: 'migrations',
   migrationsCollection: 'migrations_changelog',
-  fileExt: '.migration.ts',
 };

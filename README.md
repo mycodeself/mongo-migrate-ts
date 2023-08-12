@@ -110,9 +110,13 @@ ts-node migrations/index.ts up
   // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
 
-  // The file extension or suffix of the migrations' filenames
-  // Defaults to .ts
-  fileExt?: string
+  // The glob pattern of migration scripts
+  pattern?: string;
+
+  // The glob options for pattern matching
+  // (see https://github.com/isaacs/node-glob#options)
+  // (Default: { cwd: migrationsDir })
+  glob?: GlobOptions;
 }
 ```
 

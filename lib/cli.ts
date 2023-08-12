@@ -44,7 +44,6 @@ export const cli = (config?: Config): void => {
           migrationName: name,
           migrationsDir: config.migrationsDir,
           templateFile: templateFile,
-          fileExt: config.fileExt,
         });
       });
 

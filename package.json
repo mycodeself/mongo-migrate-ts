@@ -59,6 +59,7 @@
     "cli-table": "^0.3.11",
     "commander": "^9.0.0",
     "connection-string": "^4.3.5",
+    "glob": "^10.3.3",
     "ora": "^5.4.1"
   },
   "peerDependencies": {

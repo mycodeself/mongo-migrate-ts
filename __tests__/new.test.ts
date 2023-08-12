@@ -99,29 +99,4 @@ describe('new command', () => {
       defaultTemplateText
     );
   });
-
-  it('should create the migration file with the provided extension', () => {
-    const defaultTemplateText = 'default template file contents';
-
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
-    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(
-      defaultTemplateText
-    );
-
-    const migrationName = 'TestMigration';
-    newModule.newCommand({
-      migrationName,
-      migrationsDir: configMock.migrationsDir,
-      fileExt: configMock.fileExt,
-    });
-
-    const fileName = `${+new Date()}_TestMigration`;
-    const ext = configMock.fileExt;
-    const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}${ext}`;
-
-    expect(writeFileSyncSpy).toHaveBeenCalledWith(
-      expectedMigrationsPath,
-      defaultTemplateText
-    );
-  });
 });

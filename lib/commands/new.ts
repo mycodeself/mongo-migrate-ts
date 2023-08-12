@@ -5,7 +5,6 @@ interface CommandNewOptions {
   migrationsDir: string;
   migrationName?: string;
   templateFile?: string;
-  fileExt?: string;
 }
 
 export const defaultMigrationTemplate = (className: string) => {
@@ -41,7 +40,7 @@ export const getMigrationTemplate = (
 };
 
 export const newCommand = (opts: CommandNewOptions): string => {
-  const { migrationName, migrationsDir, templateFile, fileExt } = opts;
+  const { migrationName, migrationsDir, templateFile } = opts;
 
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);
@@ -51,8 +50,7 @@ export const newCommand = (opts: CommandNewOptions): string => {
 
   const template = getMigrationTemplate(className, templateFile);
 
-  const ext = fileExt ?? '.ts';
-  const migrationPath = `${migrationsDir}/${fileName}${ext}`;
+  const migrationPath = `${migrationsDir}/${fileName}.ts`;
 
   fs.writeFileSync(migrationPath, template);
 

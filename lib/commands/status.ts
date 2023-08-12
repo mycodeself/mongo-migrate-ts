@@ -18,7 +18,8 @@ export const status = async (opts: CommandStatusOptions) => {
     options,
     migrationsCollection,
     migrationsDir,
-    fileExt,
+    pattern,
+    glob,
   } = processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
   try {
@@ -27,7 +28,7 @@ export const status = async (opts: CommandStatusOptions) => {
     const appliedMigrations = await getAppliedMigrations(collection);
 
     const notAppliedMigrations = (
-      await loadMigrations(migrationsDir, fileExt)
+      await loadMigrations(migrationsDir, pattern, glob)
     ).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(

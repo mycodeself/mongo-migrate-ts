@@ -3,6 +3,7 @@ import { MongoClientOptions } from 'mongodb';
 import { getDbFromUri } from './utils/getDbFromUri';
 import { ConfigFileNotFoundError } from './errors';
 import * as path from 'path';
+import { GlobOptions } from 'glob';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
 const DEFAULT_MIGRATIONS_DIR = 'migrations';
@@ -16,7 +17,9 @@ export interface ProcessedConfig {
   migrationsDir: string;
   migrationsCollection: string;
   options?: MongoClientOptions;
-  fileExt?: string;
+
+  pattern?: string;
+  glob?: GlobOptions;
 }
 
 export interface Config {
@@ -30,7 +33,9 @@ export interface Config {
     databaseVar?: string;
   };
   options?: MongoClientOptions;
-  fileExt?: string;
+
+  pattern?: string;
+  glob?: GlobOptions;
 }
 
 export const readConfigFromFile = (filePath: string): Config => {
@@ -96,6 +101,7 @@ export const processConfig = (config: Config): ProcessedConfig => {
     migrationsCollection:
       config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
     options: config.options,
-    fileExt: config.fileExt,
+    pattern: config.pattern,
+    glob: config.glob,
   } as ProcessedConfig;
 };
