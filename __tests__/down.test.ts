@@ -14,7 +14,7 @@ import {
   MigrationModel,
   mongoConnect,
 } from '../lib/database';
-import { MigrationInterface } from '../lib/MigrationInterface';
+import { MigrationInterface } from '../lib';
 import { loadMigrationFile } from '../lib/migrations';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';

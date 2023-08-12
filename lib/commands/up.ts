@@ -51,7 +51,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
         `Applying migration ${migration.className}`
       ).start();
       try {
-        await migration.instance.up(connection.db);
+        await migration.instance.up(connection.db, connection.client);
         await insertMigration(collection, migration);
         localSpinner.succeed(`Migration ${migration.className} up`).stop();
       } catch (e) {

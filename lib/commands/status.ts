@@ -1,4 +1,4 @@
-import cliTable from 'cli-table';
+import CliTable from 'cli-table';
 import { Config, processConfig } from '../config';
 import {
   getAppliedMigrations,
@@ -35,13 +35,13 @@ export const status = async (opts: CommandStatusOptions) => {
         ) === undefined
     );
 
-    const table = new cliTable({
+    const table = new CliTable({
       head: ['Migration', 'Status', 'Timestamp'],
       colWidths: [100, 200],
     });
 
     appliedMigrations.map((migration: MigrationModel) => {
-      table.push([migration.className, 'up', migration.timestamp.toString()]);
+      table.push([migration.className, 'up', String(migration.timestamp)]);
     });
 
     notAppliedMigrations.map((migration: MigrationObject) => {
@@ -50,6 +50,6 @@ export const status = async (opts: CommandStatusOptions) => {
 
     console.log(table.toString());
   } finally {
-    connection.client.close();
+    await connection.client.close();
   }
 };
