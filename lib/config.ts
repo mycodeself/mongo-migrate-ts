@@ -4,13 +4,14 @@ import { MongoClientOptions } from 'mongodb';
 import * as path from 'path';
 import { ConfigFileNotFoundError } from './errors';
 import { getDbFromUri } from './utils/getDbFromUri';
+import { isTsNode } from './utils/isTsNode';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
 const DEFAULT_MIGRATIONS_DIR = 'migrations';
 const DEFAULT_CONFIG_FILENAME = 'migrations.json';
 const DEFAULT_ENV_VAR_URI = 'MONGO_MIGRATE_URI';
 const DEFAULT_ENV_VAR_DB = 'MONGO_MIGRATE_DB';
-const DEFAULT_GLOB_PATTERN = '**/*.ts';
+const DEFAULT_GLOB_PATTERN = isTsNode() ? '**/*.ts' : '**/*.js';
 
 export interface ProcessedConfig {
   uri: string;

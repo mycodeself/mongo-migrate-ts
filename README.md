@@ -89,6 +89,13 @@ ts-node migrations/index.ts up
   // The name of the collection to store the applied migrations
   // (Default: "migrations_changelog")
   migrationsCollection?: string;
+  // The glob pattern for migration scripts
+  // (Default: isTsNode() ? '**/*.ts' : '**/*.js'
+  globPattern?: string;
+  // The glob options for pattern matching
+  // (see https://github.com/isaacs/node-glob#options)
+  // (Default: { cwd: migrationsDir })
+  globOptions?: string;  
   // The connection uri, it can be empty if useEnv is true
   // (Example: mongodb://user:password@127.0.0.1:27017/db?authSource=admin)
   uri?: string;
