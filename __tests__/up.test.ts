@@ -14,11 +14,7 @@ import {
   mongoConnect,
 } from '../lib/database';
 import { MigrationInterface } from '../lib/MigrationInterface';
-import {
-  MigrationObject,
-  loadMigrations,
-  loadMigrationsGlob,
-} from '../lib/migrations';
+import { MigrationObject, loadMigrations } from '../lib/migrations';
 import { ExecuteMigrationError } from '../lib/errors';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
@@ -40,7 +36,7 @@ describe('up command', () => {
   (mongoConnect as jest.Mock).mockReturnValue(
     new Promise((resolve) => resolve(connectionMock))
   );
-  (loadMigrationsGlob as jest.Mock).mockReturnValue(
+  (loadMigrations as jest.Mock).mockReturnValue(
     new Promise((resolve) => resolve(Promise.all(fakeMigrations)))
   );
 

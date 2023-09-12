@@ -5,7 +5,7 @@ import {
   getAppliedMigrations,
   mongoConnect,
 } from '../database';
-import { MigrationObject, loadMigrationsGlob } from '../migrations';
+import { MigrationObject, loadMigrations } from '../migrations';
 
 interface CommandStatusOptions {
   config: Config;
@@ -28,7 +28,7 @@ export const status = async (opts: CommandStatusOptions): Promise<void> => {
     const appliedMigrations = await getAppliedMigrations(collection);
 
     const notAppliedMigrations = (
-      await loadMigrationsGlob(migrationsDir, globPattern, globOptions)
+      await loadMigrations(migrationsDir, globPattern, globOptions)
     ).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(

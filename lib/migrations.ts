@@ -1,10 +1,8 @@
 import * as fs from 'fs';
+import { GlobOptions, glob } from 'glob';
 import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
-import { isTsNode } from './utils/isTsNode';
-import { GlobOptions, glob } from 'glob';
-import { Path } from 'path-scurry';
 
 export interface MigrationObject {
   file: string;
@@ -44,38 +42,20 @@ export const loadMigrationFile = async (
 };
 
 export const loadMigrations = async (
-  migrationsDir: string
-): Promise<MigrationObject[]> => {
-  const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
-
-  const migrations = Promise.all(
-    fs
-      .readdirSync(migrationsDir)
-      .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
-  );
-
-  // flat migrations because in one file can be more than one migration
-  const flatMigrations = flatArray(await migrations);
-
-  return flatMigrations;
-};
-
-export const loadMigrationsGlob = async (
   migrationsDir: string,
   globPattern: string,
   globOptions: GlobOptions
 ): Promise<MigrationObject[]> => {
-  const files = (await glob(globPattern, {
-    ...globOptions,
-  })) as string[];
+  const paths = await glob(globPattern, globOptions);
 
-  const migrations = Promise.all(
-    files.map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+  const migrations = await Promise.all(
+    paths
+      .map((path) => (typeof path === 'string' ? path : path.fullpath()))
+      .map((path) => loadMigrationFile(`${migrationsDir}/${path}`))
   );
 
   // flat migrations because in one file can be more than one migration
-  const flatMigrations = flatArray(await migrations);
+  const flatMigrations = flatArray(migrations);
 
   return flatMigrations;
 };

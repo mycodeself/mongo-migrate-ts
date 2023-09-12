@@ -8,7 +8,7 @@ import {
   mongoConnect,
 } from '../database';
 import { DbConnectionError, ExecuteMigrationError } from '../errors';
-import { MigrationObject, loadMigrationsGlob } from '../migrations';
+import { MigrationObject, loadMigrations } from '../migrations';
 
 interface CommandUpOptions {
   config: Config;
@@ -35,7 +35,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
-    const migrationObjs = await loadMigrationsGlob(
+    const migrationObjs = await loadMigrations(
       migrationsDir,
       globPattern,
       globOptions

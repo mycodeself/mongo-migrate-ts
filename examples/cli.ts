@@ -5,5 +5,4 @@ mongoMigrateCli({
   database: 'db',
   migrationsDir: `${__dirname}/migrations`,
   migrationsCollection: 'migrations_collection',
-  globPattern: '**/*.ts',
 });
