@@ -17,7 +17,6 @@ export interface ProcessedConfig {
   migrationsDir: string;
   migrationsCollection: string;
   options?: MongoClientOptions;
-
   pattern?: string;
   glob?: GlobOptions;
 }
