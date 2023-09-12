@@ -1,25 +1,31 @@
 import * as fs from 'fs';
+import { GlobOptions } from 'glob';
 import { MongoClientOptions } from 'mongodb';
-import { getDbFromUri } from './utils/getDbFromUri';
-import { ConfigFileNotFoundError } from './errors';
 import * as path from 'path';
+import { ConfigFileNotFoundError } from './errors';
+import { getDbFromUri } from './utils/getDbFromUri';
 
 const DEFAULT_MIGRATIONS_COLLECTION = 'migrations_changelog';
 const DEFAULT_MIGRATIONS_DIR = 'migrations';
 const DEFAULT_CONFIG_FILENAME = 'migrations.json';
 const DEFAULT_ENV_VAR_URI = 'MONGO_MIGRATE_URI';
 const DEFAULT_ENV_VAR_DB = 'MONGO_MIGRATE_DB';
+const DEFAULT_GLOB_PATTERN = '**/*.ts';
 
 export interface ProcessedConfig {
   uri: string;
   database: string;
   migrationsDir: string;
   migrationsCollection: string;
+  globPattern: string;
+  globOptions: GlobOptions;
   options?: MongoClientOptions;
 }
 
 export interface Config {
   migrationsDir: string;
+  globPattern?: string;
+  globOptions?: GlobOptions;
   migrationsCollection?: string;
   uri?: string;
   database?: string;
@@ -94,5 +100,7 @@ export const processConfig = (config: Config): ProcessedConfig => {
     migrationsCollection:
       config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
     options: config.options,
+    globPattern: config.globPattern || DEFAULT_GLOB_PATTERN,
+    globOptions: config.globOptions || { cwd: config.migrationsDir },
   } as ProcessedConfig;
 };

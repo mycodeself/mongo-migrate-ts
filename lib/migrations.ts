@@ -3,6 +3,8 @@ import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
 import { isTsNode } from './utils/isTsNode';
+import { GlobOptions, glob } from 'glob';
+import { Path } from 'path-scurry';
 
 export interface MigrationObject {
   file: string;
@@ -51,6 +53,25 @@ export const loadMigrations = async (
       .readdirSync(migrationsDir)
       .filter((file: string) => fileExt.test(file))
       .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+  );
+
+  // flat migrations because in one file can be more than one migration
+  const flatMigrations = flatArray(await migrations);
+
+  return flatMigrations;
+};
+
+export const loadMigrationsGlob = async (
+  migrationsDir: string,
+  globPattern: string,
+  globOptions: GlobOptions
+): Promise<MigrationObject[]> => {
+  const files = (await glob(globPattern, {
+    ...globOptions,
+  })) as string[];
+
+  const migrations = Promise.all(
+    files.map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
   );
 
   // flat migrations because in one file can be more than one migration

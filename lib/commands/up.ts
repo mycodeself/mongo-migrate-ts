@@ -1,22 +1,29 @@
 import ora from 'ora';
 import { Config, processConfig } from '../config';
 import {
-  getAppliedMigrations,
+  DatabaseConnection,
   MigrationModel,
+  getAppliedMigrations,
   insertMigration,
   mongoConnect,
-  DatabaseConnection,
 } from '../database';
-import { MigrationObject, loadMigrations } from '../migrations';
-import { ExecuteMigrationError, DbConnectionError } from '../errors';
+import { DbConnectionError, ExecuteMigrationError } from '../errors';
+import { MigrationObject, loadMigrationsGlob } from '../migrations';
 
 interface CommandUpOptions {
   config: Config;
 }
 
 export const up = async (opts: CommandUpOptions): Promise<void> => {
-  const { uri, database, options, migrationsCollection, migrationsDir } =
-    processConfig(opts.config);
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    migrationsDir,
+    globPattern,
+    globOptions,
+  } = processConfig(opts.config);
   let connection: DatabaseConnection;
   try {
     connection = await mongoConnect(uri, database, options);
@@ -28,7 +35,12 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
-    const migrations = (await loadMigrations(migrationsDir)).filter(
+    const migrationObjs = await loadMigrationsGlob(
+      migrationsDir,
+      globPattern,
+      globOptions
+    );
+    const migrations = migrationObjs.filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(
           (m: MigrationModel) => m.className === migration.className

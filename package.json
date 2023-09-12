@@ -59,7 +59,9 @@
     "cli-table": "^0.3.11",
     "commander": "^9.0.0",
     "connection-string": "^4.3.5",
-    "ora": "^5.4.1"
+    "glob": "^10.3.4",
+    "ora": "^5.4.1",
+    "path-scurry": "^1.10.1"
   },
   "peerDependencies": {
     "mongodb": "4.x.x || 5.x.x"
