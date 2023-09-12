@@ -33,7 +33,6 @@ export interface Config {
     databaseVar?: string;
   };
   options?: MongoClientOptions;
-
   pattern?: string;
   glob?: GlobOptions;
 }
