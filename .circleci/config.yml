@@ -2,10 +2,10 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: cimg/node:18.15
+      - image: cimg/node:18.17
   node-with-mongo:
     docker:
-      - image: cimg/node:18.15
+      - image: cimg/node:18.17
       - image: mongo:5.0
         environment:
           MONGO_INITDB_ROOT_USERNAME: admin
