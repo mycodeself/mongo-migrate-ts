@@ -29,7 +29,7 @@ export const status = async (opts: CommandStatusOptions): Promise<void> => {
 
     const table = new CliTable({
       head: ['Migration', 'Status', 'Timestamp'],
-      colWidths: [100, 200],
+      colWidths: [48, 14, 18],
     });
 
     appliedMigrations.map((migration: MigrationModel) => {
