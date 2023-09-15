@@ -2,7 +2,7 @@ import { Db, MongoClient } from 'mongodb';
 import { MigrationInterface } from '../../lib';
 
 export class Transaction1691171075957 implements MigrationInterface {
-  public async up(db: Db, client: MongoClient): Promise<any> {
+  public async up(db: Db, client: MongoClient): Promise<void> {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
@@ -15,7 +15,7 @@ export class Transaction1691171075957 implements MigrationInterface {
     }
   }
 
-  public async down(db: Db, client: MongoClient): Promise<any> {
+  public async down(db: Db, client: MongoClient): Promise<void> {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
