@@ -22,6 +22,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
     migrationsCollection,
     migrationsDir,
     pattern,
+    glob,
   } = processConfig(opts.config);
   let connection: DatabaseConnection;
   try {
@@ -34,7 +35,9 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
     const appliedMigrations = await getAppliedMigrations(collection);
-    const migrations = (await loadMigrations(migrationsDir, pattern)).filter(
+    const migrations = (
+      await loadMigrations(migrationsDir, pattern, glob)
+    ).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(
           (m: MigrationModel) => m.className === migration.className
