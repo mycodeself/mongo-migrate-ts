@@ -109,6 +109,6 @@ export const down = async ({
         break;
     }
   } finally {
-    connection.client.close();
+    await connection.client.close();
   }
 };
