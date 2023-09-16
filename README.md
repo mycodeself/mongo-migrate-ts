@@ -109,6 +109,14 @@ ts-node migrations/index.ts up
   // Specific configuration of mongodb client
   // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
+
+  // The glob pattern of migration scripts
+  pattern?: string;
+
+  // The glob options for pattern matching
+  // (see https://github.com/isaacs/node-glob#options)
+  // (Default: { cwd: migrationsDir })
+  glob?: GlobOptions;
 }
 ```
 

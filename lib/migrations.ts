@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as glob from 'glob';
 import * as path from 'path';
 import { MigrationInterface } from './MigrationInterface';
 import { flatArray } from './utils/flatArray';
@@ -42,15 +43,21 @@ export const loadMigrationFile = async (
 };
 
 export const loadMigrations = async (
-  migrationsDir: string
+  migrationsDir: string,
+  pattern?: string,
+  globOptions?: glob.GlobOptions
 ): Promise<MigrationObject[]> => {
-  const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
+  const filePattern = pattern ?? (isTsNode() ? '**/*.ts' : '**/*.js');
 
   const migrations = Promise.all(
-    fs
-      .readdirSync(migrationsDir)
-      .filter((file: string) => fileExt.test(file))
-      .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
+    glob
+      .globSync(filePattern, {
+        cwd: migrationsDir,
+        ...(globOptions ?? {}),
+      })
+      .map((path) => (typeof path === 'string' ? path : path.fullpath()))
+      .sort()
+      .map((file) => loadMigrationFile(migrationsDir + '/' + file))
   );
 
   // flat migrations because in one file can be more than one migration
