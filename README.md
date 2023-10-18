@@ -58,11 +58,11 @@ import { MigrationInterface } from 'mongo-migrate-ts';
 import { Db } from 'mongodb';
 
 export class MyMigration implements MigrationInterface {
-  async up(db: Db): Promise<any> {
+  async up(db: Db): Promise<void | never> {
     await db.createCollection('my_collection');
   }
 
-  async down(db: Db): Promise<any> {
+  async down(db: Db): Promise<void | never> {
     await db.dropCollection('my_collection');
   }
 }
@@ -130,7 +130,7 @@ import { Db, MongoClient } from 'mongodb';
 import { MigrationInterface } from '../../lib';
 
 export class Transaction1691171075957 implements MigrationInterface {
-  public async up(db: Db, client: MongoClient): Promise<any> {
+  public async up(db: Db, client: MongoClient): Promise<void | never> {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
@@ -143,7 +143,7 @@ export class Transaction1691171075957 implements MigrationInterface {
     }
   }
 
-  public async down(db: Db, client: MongoClient): Promise<any> {
+  public async down(db: Db, client: MongoClient): Promise<void | never> {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
