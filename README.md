@@ -55,14 +55,14 @@ Create a migration file in the configured migrations folder...
 
 ```typescript
 import { MigrationInterface } from 'mongo-migrate-ts';
-import { Db } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 
 export class MyMigration implements MigrationInterface {
-  async up(db: Db): Promise<void | never> {
+  async up(db: Db, client: MongoClient): Promise<void | never> {
     await db.createCollection('my_collection');
   }
 
-  async down(db: Db): Promise<void | never> {
+  async down(db: Db, client: MongoClient): Promise<void | never> {
     await db.dropCollection('my_collection');
   }
 }

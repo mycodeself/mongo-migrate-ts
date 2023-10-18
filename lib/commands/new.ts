@@ -8,14 +8,14 @@ interface CommandNewOptions {
 }
 
 export const defaultMigrationTemplate = (className: string) => {
-  return `import { Db } from 'mongodb'
+  return `import { Db, MongoClient } from 'mongodb';
 import { MigrationInterface } from 'mongo-migrate-ts';
 
 export class ${className} implements MigrationInterface {
-  public async up(db: Db): Promise<void | never> {
+  public async up(db: Db, client: MongoClient): Promise<void | never> { {
   }
 
-  public async down(db: Db): Promise<void | never> {
+  public async down(db: Db, client: MongoClient): Promise<void | never> {
   }
 }
 `;
