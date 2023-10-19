@@ -41,7 +41,10 @@ export const cli = (config?: Config): void => {
         }
 
         newCommand({
-          migrationName: name,
+          migrationName: {
+            title: name,
+            timestampFormat: config.migrationNameTimestampFormat,
+          },
           migrationsDir: config.migrationsDir,
           templateFile: templateFile,
         });
