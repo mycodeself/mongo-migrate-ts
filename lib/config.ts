@@ -16,6 +16,7 @@ export interface ProcessedConfig {
   database: string;
   migrationsDir: string;
   migrationsCollection: string;
+  migrationNameTimestampFormat: string;
   options?: MongoClientOptions;
 }
 
@@ -29,7 +30,7 @@ export interface Config {
     uriVar?: string;
     databaseVar?: string;
   };
-  migrationNameTimestampFormat: string;
+  migrationNameTimestampFormat?: string;
   options?: MongoClientOptions;
 }
 

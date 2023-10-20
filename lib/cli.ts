@@ -4,7 +4,7 @@ import { init } from './commands/init';
 import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
-import { Config } from './config';
+import { Config, processConfig } from './config';
 
 export const cli = (config?: Config): void => {
   const program = new Command();
@@ -39,14 +39,15 @@ export const cli = (config?: Config): void => {
         ) {
           templateFile = undefined;
         }
-
+        const { migrationsDir, migrationNameTimestampFormat } =
+          processConfig(config);
         newCommand({
           migrationName: {
             title: name,
-            timestampFormat: config.migrationNameTimestampFormat,
+            timestampFormat: migrationNameTimestampFormat,
           },
-          migrationsDir: config.migrationsDir,
-          templateFile: templateFile,
+          migrationsDir,
+          templateFile,
         });
       });
 
