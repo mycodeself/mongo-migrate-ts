@@ -119,6 +119,7 @@ describe('new command', () => {
 
   it('should create a new migration file with custom timestamp format if format provided', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(expect.any(String));
     const migrationName = {
       timestampFormat: 'yyyyMMddHHmmss',
     };
@@ -130,7 +131,7 @@ describe('new command', () => {
     expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSyncSpy).toHaveBeenCalledWith(
       expectedMigrationsPath,
-      expect.anything()
+      expect.any(String)
     );
   });
 });
