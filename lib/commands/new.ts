@@ -1,9 +1,13 @@
 import * as fs from 'fs';
 import { TemplateFileNotFoundError } from '../errors';
+import { Timestamp } from '../utils/timestamp';
 
 interface CommandNewOptions {
   migrationsDir: string;
-  migrationName?: string;
+  migrationName: {
+    title?: string;
+    timestampFormat: string;
+  };
   templateFile?: string;
 }
 
@@ -40,13 +44,19 @@ export const getMigrationTemplate = (
 };
 
 export const newCommand = (opts: CommandNewOptions): string => {
-  const { migrationName, migrationsDir, templateFile } = opts;
+  const {
+    migrationName: { title, timestampFormat },
+    migrationsDir,
+    templateFile,
+  } = opts;
 
   if (!fs.existsSync(migrationsDir)) {
     fs.mkdirSync(migrationsDir);
   }
-  const fileName = `${+new Date()}_${migrationName || 'Migration'}`;
-  const className = `${migrationName || 'Migration'}${+new Date()}`;
+  const fileName = `${new Timestamp().toString(timestampFormat)}_${
+    title || 'Migration'
+  }`;
+  const className = `${title || 'Migration'}${+new Date()}`;
 
   const template = getMigrationTemplate(className, templateFile);
 
