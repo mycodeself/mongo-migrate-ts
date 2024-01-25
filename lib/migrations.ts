@@ -20,14 +20,18 @@ const isMigration = (obj: any): boolean => {
   );
 };
 
+const isMigrationFile = (fileName: string): boolean => {
+  return /.[jt]s$/.test(fileName) && !/.(spec|test).[jt]s$/.test(fileName)
+}
+
 export const loadMigrationFile = async (
   filePath: string
 ): Promise<MigrationObject[]> => {
   if (!fs.existsSync(filePath)) {
-    throw new Error(`File ${filePath} not exists.`);
+    throw new Error(`File ${filePath} not exists.`)
   }
 
-  const classes = await import(path.resolve(filePath));
+  const classes = await import(path.resolve(filePath))
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')
@@ -36,25 +40,23 @@ export const loadMigrationFile = async (
         file: filePath,
         className: key,
         instance: new classes[key](),
-      };
+      }
     })
-    .filter((migration: MigrationObject) => isMigration(migration.instance));
-};
+    .filter((migration: MigrationObject) => isMigration(migration.instance))
+}
 
 export const loadMigrations = async (
   migrationsDir: string
 ): Promise<MigrationObject[]> => {
-  const fileExt = isTsNode() ? new RegExp(/\.ts$/i) : new RegExp(/\.js$/i);
-
   const migrations = Promise.all(
     fs
       .readdirSync(migrationsDir)
-      .filter((file: string) => fileExt.test(file))
+      .filter((file: string) => isMigrationFile(file))
       .map((file: string) => loadMigrationFile(`${migrationsDir}/${file}`))
-  );
+  )
 
   // flat migrations because in one file can be more than one migration
-  const flatMigrations = flatArray(await migrations);
+  const flatMigrations = flatArray(await migrations)
 
-  return flatMigrations;
-};
+  return flatMigrations
+}
