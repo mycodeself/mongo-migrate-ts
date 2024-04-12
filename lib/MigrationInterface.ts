@@ -1,6 +1,6 @@
 import { Db, MongoClient } from 'mongodb';
 
 export interface MigrationInterface {
-  up(db: Db, client: MongoClient): Promise<any>;
-  down(db: Db, client: MongoClient): Promise<any>;
+  up(db: Db, client: MongoClient): Promise<void>;
+  down(db: Db, client: MongoClient): Promise<void>;
 }

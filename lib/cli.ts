@@ -66,13 +66,13 @@ export const cli = (config?: Config): void => {
       .description('Undo migrations')
       .option('-l, --last', 'Undo the last applied migration')
       .option('-a, --all', 'Undo all applied migrations')
-      .action((opts) => {
+      .action(async (opts) => {
         if (!opts.last && !opts.all) {
           program.outputHelp();
           process.exit(-1);
         }
 
-        down({
+        await down({
           config,
           mode: opts.last ? 'last' : 'all',
         });
@@ -81,8 +81,8 @@ export const cli = (config?: Config): void => {
     program
       .command('status')
       .description('Show the status of the migrations')
-      .action(() => {
-        status({ config });
+      .action(async () => {
+        await status({ config });
       });
   }
 

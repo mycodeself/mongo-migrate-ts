@@ -5,8 +5,8 @@ executors:
       - image: cimg/node:18.17
   node-with-mongo:
     docker:
-      - image: cimg/node:18.17
-      - image: mongo:5.0
+      - image: cimg/node:18.15
+      - image: mongo:6.0
         environment:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: admin
