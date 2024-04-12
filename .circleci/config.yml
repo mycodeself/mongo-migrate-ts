@@ -2,10 +2,10 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: cimg/node:18.15
+      - image: cimg/node:20.12
   node-with-mongo:
     docker:
-      - image: cimg/node:18.15
+      - image: cimg/node:20.12
       - image: mongo:6.0
         environment:
           MONGO_INITDB_ROOT_USERNAME: admin
@@ -28,7 +28,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: yarn test:ci
-      - run: yarn audit --level high --no-progress --frozen-lockfile
+      - run: yarn audit --level high --frozen-lockfile
 
   test-example:
     executor: node-with-mongo
@@ -36,6 +36,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: yarn ts-node examples/cli.ts up
+      - run: yarn ts-node examples/cli.ts status
       - run: yarn ts-node examples/cli.ts down --all
 
   release:
