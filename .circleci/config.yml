@@ -36,6 +36,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: yarn ts-node examples/cli.ts up
+      - run: yarn ts-node examples/cli.ts status
       - run: yarn ts-node examples/cli.ts down --all
 
   release:
