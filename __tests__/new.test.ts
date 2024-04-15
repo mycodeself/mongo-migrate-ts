@@ -9,7 +9,7 @@ describe('new command', () => {
   const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync');
   const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync');
   const defaultTemplateSpy = jest.spyOn(newModule, 'defaultMigrationTemplate');
-  const timestampFormat = 'T';
+  const migrationNameTimestampFormat = 'T';
 
   beforeAll(() => {
     jest
@@ -25,12 +25,10 @@ describe('new command', () => {
 
   it('should create a new migration file', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    const migrationName = {
-      title: 'TestMigration',
-      timestampFormat,
-    };
+    const migrationName = 'TestMigration';
     newModule.newCommand({
       migrationName,
+      migrationNameTimestampFormat,
       migrationsDir: configMock.migrationsDir,
     });
     expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
@@ -40,12 +38,10 @@ describe('new command', () => {
   it('should create the migration folder if not exists', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
 
-    const migrationName = {
-      title: 'TestMigration',
-      timestampFormat,
-    };
+    const migrationName = 'TestMigration';
     newModule.newCommand({
       migrationName,
+      migrationNameTimestampFormat,
       migrationsDir: configMock.migrationsDir,
     });
 
@@ -66,9 +62,7 @@ describe('new command', () => {
     newModule.newCommand({
       migrationsDir: configMock.migrationsDir,
       templateFile: templateFile,
-      migrationName: {
-        timestampFormat,
-      },
+      migrationNameTimestampFormat,
     });
     const fileName = `${newDate}_Migration`;
     const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
@@ -99,9 +93,7 @@ describe('new command', () => {
 
     newModule.newCommand({
       migrationsDir: configMock.migrationsDir,
-      migrationName: {
-        timestampFormat,
-      },
+      migrationNameTimestampFormat,
     });
 
     const fileName = `${+new Date()}_Migration`;
@@ -119,12 +111,12 @@ describe('new command', () => {
 
   it('should create a new migration file with custom timestamp format if format provided', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(expect.any(String));
-    const migrationName = {
-      timestampFormat: 'yyyyMMddHHmmss',
-    };
+    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(
+      expect.any(String)
+    );
+    const migrationNameTimestampFormat = 'yyyyMMddHHmmss';
     newModule.newCommand({
-      migrationName,
+      migrationNameTimestampFormat,
       migrationsDir: configMock.migrationsDir,
     });
     const expectedMigrationsPath = `${configMock.migrationsDir}/20220101000000_Migration.ts`;
