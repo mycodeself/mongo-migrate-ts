@@ -1,8 +1,8 @@
 import CliTable from 'cli-table';
 import { Config, processConfig } from '../config';
 import {
-  getAppliedMigrations,
   MigrationModel,
+  getAppliedMigrations,
   mongoConnect,
 } from '../database';
 import { MigrationObject, loadMigrations } from '../migrations';
@@ -12,15 +12,24 @@ interface CommandStatusOptions {
 }
 
 export const status = async (opts: CommandStatusOptions): Promise<void> => {
-  const { uri, database, options, migrationsCollection, migrationsDir } =
-    processConfig(opts.config);
+  const {
+    uri,
+    database,
+    options,
+    migrationsCollection,
+    globPattern,
+    globOptions,
+    migrationsDir,
+  } = processConfig(opts.config);
   const connection = await mongoConnect(uri, database, options);
   try {
     const collection = connection.getMigrationsCollection(migrationsCollection);
 
     const appliedMigrations = await getAppliedMigrations(collection);
 
-    const notAppliedMigrations = (await loadMigrations(migrationsDir)).filter(
+    const notAppliedMigrations = (
+      await loadMigrations(migrationsDir, globPattern, globOptions)
+    ).filter(
       (migration: MigrationObject) =>
         appliedMigrations.find(
           (m: MigrationModel) => m.className === migration.className
