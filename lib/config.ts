@@ -12,12 +12,14 @@ const DEFAULT_CONFIG_FILENAME = 'migrations.json';
 const DEFAULT_ENV_VAR_URI = 'MONGO_MIGRATE_URI';
 const DEFAULT_ENV_VAR_DB = 'MONGO_MIGRATE_DB';
 const DEFAULT_GLOB_PATTERN = isTsNode() ? '**/*.ts' : '**/*.js';
+const DEFAULT_MIGRATION_NAME_TIMESTAMP_FORMAT = 'T';
 
 export interface ProcessedConfig {
   uri: string;
   database: string;
   migrationsDir: string;
   migrationsCollection: string;
+  migrationNameTimestampFormat: string;
   globPattern: string;
   globOptions: GlobOptions;
   options?: MongoClientOptions;
@@ -35,6 +37,7 @@ export interface Config {
     uriVar?: string;
     databaseVar?: string;
   };
+  migrationNameTimestampFormat?: string;
   options?: MongoClientOptions;
 }
 
@@ -101,6 +104,9 @@ export const processConfig = (config: Config): ProcessedConfig => {
     migrationsCollection:
       config.migrationsCollection || DEFAULT_MIGRATIONS_COLLECTION,
     options: config.options,
+    migrationNameTimestampFormat:
+      config.migrationNameTimestampFormat ||
+      DEFAULT_MIGRATION_NAME_TIMESTAMP_FORMAT,
     globPattern: config.globPattern || DEFAULT_GLOB_PATTERN,
     globOptions: config.globOptions || { cwd: config.migrationsDir },
   } as ProcessedConfig;

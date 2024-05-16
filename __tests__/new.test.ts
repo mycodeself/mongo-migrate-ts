@@ -9,6 +9,7 @@ describe('new command', () => {
   const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync');
   const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync');
   const defaultTemplateSpy = jest.spyOn(newModule, 'defaultMigrationTemplate');
+  const migrationNameTimestampFormat = 'T';
 
   beforeAll(() => {
     jest
@@ -27,9 +28,10 @@ describe('new command', () => {
     const migrationName = 'TestMigration';
     newModule.newCommand({
       migrationName,
+      migrationNameTimestampFormat,
       migrationsDir: configMock.migrationsDir,
     });
-
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 
@@ -39,10 +41,13 @@ describe('new command', () => {
     const migrationName = 'TestMigration';
     newModule.newCommand({
       migrationName,
+      migrationNameTimestampFormat,
       migrationsDir: configMock.migrationsDir,
     });
 
+    expect(mkdirSyncSpy).toHaveBeenCalledTimes(1);
     expect(mkdirSyncSpy).toHaveBeenCalledWith(configMock.migrationsDir);
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSyncSpy).toHaveBeenCalled();
   });
 
@@ -57,11 +62,12 @@ describe('new command', () => {
     newModule.newCommand({
       migrationsDir: configMock.migrationsDir,
       templateFile: templateFile,
+      migrationNameTimestampFormat,
     });
     const fileName = `${newDate}_Migration`;
     const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
     const expectedTemplateFileText = `class Migration${newDate} template file contents`;
-
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSyncSpy).toHaveBeenCalledWith(
       expectedMigrationsPath,
       expectedTemplateFileText
@@ -87,16 +93,37 @@ describe('new command', () => {
 
     newModule.newCommand({
       migrationsDir: configMock.migrationsDir,
+      migrationNameTimestampFormat,
     });
 
     const fileName = `${+new Date()}_Migration`;
 
     const expectedMigrationsPath = `${configMock.migrationsDir}/${fileName}.ts`;
 
-    expect(defaultTemplateSpy).toHaveBeenCalled();
+    expect(defaultTemplateSpy).toHaveBeenCalledTimes(1);
+    expect(defaultTemplateSpy).toHaveBeenCalledWith(`Migration${+new Date()}`);
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSyncSpy).toHaveBeenCalledWith(
       expectedMigrationsPath,
       defaultTemplateText
+    );
+  });
+
+  it('should create a new migration file with custom timestamp format if format provided', () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (newModule.defaultMigrationTemplate as jest.Mock).mockReturnValue(
+      expect.any(String)
+    );
+    const migrationNameTimestampFormat = 'yyyyMMddHHmmss';
+    newModule.newCommand({
+      migrationNameTimestampFormat,
+      migrationsDir: configMock.migrationsDir,
+    });
+    const expectedMigrationsPath = `${configMock.migrationsDir}/20220101000000_Migration.ts`;
+    expect(writeFileSyncSpy).toHaveBeenCalledTimes(1);
+    expect(writeFileSyncSpy).toHaveBeenCalledWith(
+      expectedMigrationsPath,
+      expect.any(String)
     );
   });
 });

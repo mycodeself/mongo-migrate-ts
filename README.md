@@ -113,6 +113,9 @@ ts-node migrations/index.ts up
     // (Default: MONGO_MIGRATE_DB)
     databaseVar?: string;
   };
+  // The format pattern for timestamp in the migration file name. By default: 'T'
+  // (see https://date-fns.org/v2.30.0/docs/format)
+  migrationNameTimestampFormat?: string;
   // Specific configuration of mongodb client
   // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
@@ -124,7 +127,8 @@ Example configuration in json
 ```json
 {
   "uri": "mongodb://admin:admin@127.0.0.1:27017/mydb?authSource=admin",
-  "migrationsDir": "migrations"
+  "migrationsDir": "migrations",
+  "migrationNameTimestampFormat": "yyyyMMddHHmmss"
 }
 ```
 
