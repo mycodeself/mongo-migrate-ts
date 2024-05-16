@@ -45,13 +45,13 @@ describe('config', () => {
     const processedConfig = processConfig({
       ...configMock,
       uri,
-      database: undefined
+      database: undefined,
     });
 
     expect(processedConfig).toMatchObject({
       ...configMock,
       uri,
-      database: 'mydatabase'
+      database: 'mydatabase',
     });
   });
   it('should read the db config from the env vars', () => {
@@ -62,12 +62,12 @@ describe('config', () => {
       ...configMock,
       uri: undefined,
       database: undefined,
-      useEnv: true
+      useEnv: true,
     });
 
     expect(processedConfig).toMatchObject(configMock);
   });
-  it('shoulde read the db config from custom env vars', () => {
+  it('should read the db config from custom env vars', () => {
     process.env.MIGRATIONS_URI = configMock.uri;
     process.env.MIGRATIONS_DB = configMock.database;
 
@@ -78,8 +78,8 @@ describe('config', () => {
       useEnv: true,
       environment: {
         uriVar: 'MIGRATIONS_URI',
-        databaseVar: 'MIGRATIONS_DB'
-      }
+        databaseVar: 'MIGRATIONS_DB',
+      },
     });
 
     expect(processedConfig).toMatchObject(configMock);

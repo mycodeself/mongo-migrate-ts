@@ -89,6 +89,13 @@ ts-node migrations/index.ts up
   // The name of the collection to store the applied migrations
   // (Default: "migrations_changelog")
   migrationsCollection?: string;
+  // The glob pattern for migration scripts
+  // (Default: isTsNode() ? '**/*.ts' : '**/*.js'
+  globPattern?: string;
+  // The glob options for pattern matching
+  // (see https://github.com/isaacs/node-glob#options)
+  // (Default: { cwd: migrationsDir })
+  globOptions?: string;  
   // The connection uri, it can be empty if useEnv is true
   // (Example: mongodb://user:password@127.0.0.1:27017/db?authSource=admin)
   uri?: string;
@@ -106,6 +113,9 @@ ts-node migrations/index.ts up
     // (Default: MONGO_MIGRATE_DB)
     databaseVar?: string;
   };
+  // The format pattern for timestamp in the migration file name. By default: 'T'
+  // (see https://date-fns.org/v2.30.0/docs/format)
+  migrationNameTimestampFormat?: string;
   // Specific configuration of mongodb client
   // (see https://mongodb.github.io/node-mongodb-native/4.3/interfaces/MongoClientOptions.html)
   options?: MongoClientOptions;
@@ -117,7 +127,8 @@ Example configuration in json
 ```json
 {
   "uri": "mongodb://admin:admin@127.0.0.1:27017/mydb?authSource=admin",
-  "migrationsDir": "migrations"
+  "migrationsDir": "migrations",
+  "migrationNameTimestampFormat": "yyyyMMddHHmmss"
 }
 ```
 
