@@ -1,8 +1,4 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["plugin:@typescript-eslint/recommended", "prettier"],
-  "rules": {
-    "@typescript-eslint/no-unused-vars": [
-      "error", { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }]
-  }
+  "extends": ["plugin:@typescript-eslint/recommended", "prettier"]
 }
