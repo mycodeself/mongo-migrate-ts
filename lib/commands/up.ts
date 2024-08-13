@@ -40,12 +40,14 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
       globPattern,
       globOptions
     );
-    const migrations = migrationObjs.filter(
-      (migration: MigrationObject) =>
-        appliedMigrations.find(
-          (m: MigrationModel) => m.className === migration.className
-        ) === undefined
-    );
+    const migrations = migrationObjs
+      .filter(
+        (migration: MigrationObject) =>
+          appliedMigrations.find(
+            (m: MigrationModel) => m.className === migration.className
+          ) === undefined
+      )
+      .sort((a, b) => a.className.localeCompare(b.className));
 
     if (migrations.length === 0) {
       spinner.warn('No migrations found').stop();

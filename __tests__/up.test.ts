@@ -19,6 +19,8 @@ import { ExecuteMigrationError } from '../lib/errors';
 import { configMock } from './__mocks__/config.mock';
 import { connectionMock } from './__mocks__/connection.mock';
 
+const FAKE_TIMESTAMP = 1716382167113;
+
 describe('up command', () => {
   const numberOfMigrations = 10;
   const fakeMigrationInstance: MigrationInterface = {
@@ -27,11 +29,13 @@ describe('up command', () => {
   };
   const fakeMigrations: MigrationObject[] = Array(numberOfMigrations)
     .fill(undefined)
-    .map((v: MigrationObject, index: number) => ({
-      className: `MigrationTest${index}`,
-      file: `migrations/MigrationTest${index}.ts`,
-      instance: fakeMigrationInstance,
-    }));
+    .map((v: MigrationObject, index: number) => {
+      return {
+        className: `MigrationTest${FAKE_TIMESTAMP + index}`,
+        file: `migrations/${FAKE_TIMESTAMP + index}_MigrationTest.ts`,
+        instance: fakeMigrationInstance,
+      };
+    });
 
   (mongoConnect as jest.Mock).mockReturnValue(
     new Promise((resolve) => resolve(connectionMock))
@@ -63,8 +67,8 @@ describe('up command', () => {
       .fill(undefined)
       .map((v: MigrationModel, index: number) => ({
         id: index,
-        file: `migrations/MigrationTest${index}.ts`,
-        className: `MigrationTest${index}`,
+        className: `MigrationTest${FAKE_TIMESTAMP + index}`,
+        file: `migrations/${FAKE_TIMESTAMP + index}_MigrationTest.ts`,
         timestamp: +new Date(),
       }));
 
@@ -91,5 +95,31 @@ describe('up command', () => {
     expect(upOperation()).rejects.toThrow(ExecuteMigrationError);
     expect(insertMigration).toBeCalledTimes(0);
     expect(connectionMock.client.close());
+  });
+
+  it('should sort migrations by timestamp before applying', async () => {
+    const randomisedFakeMigrations = [...fakeMigrations].sort(
+      () => Math.random() - 0.5
+    );
+    (loadMigrations as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve(Promise.all(randomisedFakeMigrations)))
+    );
+    (getAppliedMigrations as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve([]))
+    );
+
+    connectionMock.getMigrationsCollection = jest
+      .fn()
+      .mockReturnValue('migrations');
+
+    await up({ config: configMock });
+
+    for (let i = 0; i < fakeMigrations.length; i++) {
+      expect(insertMigration).nthCalledWith(
+        i + 1,
+        connectionMock.getMigrationsCollection(),
+        fakeMigrations[i]
+      );
+    }
   });
 });
