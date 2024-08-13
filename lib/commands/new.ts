@@ -10,14 +10,14 @@ interface CommandNewOptions {
 }
 
 export const defaultMigrationTemplate = (className: string) => {
-  return `import { Db } from 'mongodb'
+  return `import { Db } from 'mongodb';
 import { MigrationInterface } from 'mongo-migrate-ts';
 
 export class ${className} implements MigrationInterface {
-  public async up(db: Db): Promise<any> {
+  public async up(db: Db): Promise<void | never> {
   }
 
-  public async down(db: Db): Promise<any> {
+  public async down(db: Db): Promise<void | never> {
   }
 }
 `;
