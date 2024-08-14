@@ -47,7 +47,16 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
             (m: MigrationModel) => m.className === migration.className
           ) === undefined
       )
-      .sort((a, b) => a.className.localeCompare(b.className));
+      .sort((a, b): number => {
+        // sort migrations by timestamp before applying
+        const aTimestamp = Number(
+          a.className.substring(a.className.length - 13)
+        );
+        const bTimestamp = Number(
+          b.className.substring(b.className.length - 13)
+        );
+        return aTimestamp > bTimestamp ? 1 : -1;
+      });
 
     if (migrations.length === 0) {
       spinner.warn('No migrations found').stop();
