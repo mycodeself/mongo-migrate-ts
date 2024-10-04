@@ -20,7 +20,8 @@ interface CommandDownOptions {
 
 const downLastAppliedMigration = async (
   connection: DatabaseConnection,
-  collection: Collection<MigrationModel>
+  collection: Collection<MigrationModel>,
+  migrationsDir: string
 ): Promise<void> => {
   const spinner = ora(`Undoing last migration`).start();
   const lastApplied = await getLastAppliedMigration(collection);
@@ -31,7 +32,7 @@ const downLastAppliedMigration = async (
   }
 
   spinner.text = `Undoing migration ${lastApplied.className}`;
-  const migrationFile = await loadMigrationFile(lastApplied.file);
+  const migrationFile = await loadMigrationFile(migrationsDir, lastApplied.file);
   const migration = migrationFile.find(
     (m: MigrationObject) => m.className === lastApplied.className
   );
@@ -51,7 +52,8 @@ const downLastAppliedMigration = async (
 
 const downAll = async (
   connection: DatabaseConnection,
-  collection: Collection<MigrationModel>
+  collection: Collection<MigrationModel>,
+  migrationsDir: string
 ): Promise<void> => {
   const spinner = ora(`Undoing all migrations`).start();
   const appliedMigrations = await getAppliedMigrations(collection);
@@ -63,7 +65,7 @@ const downAll = async (
 
   const migrationsToUndo = await Promise.all(
     appliedMigrations.map(async (migration: MigrationModel) => {
-      const m = await loadMigrationFile(migration.file);
+      const m = await loadMigrationFile(migrationsDir, migration.file);
       if (m && m.length === 0) {
         throw new Error(
           `Can undo migration ${migration.className}, no class found`
@@ -95,17 +97,17 @@ export const down = async ({
   mode,
   config,
 }: CommandDownOptions): Promise<void> => {
-  const { uri, database, options, migrationsCollection } =
+  const { uri, database, options, migrationsCollection, migrationsDir } =
     processConfig(config);
   const connection = await mongoConnect(uri, database, options);
   const collection = connection.getMigrationsCollection(migrationsCollection);
   try {
     switch (mode) {
       case 'all':
-        await downAll(connection, collection);
+        await downAll(connection, collection, migrationsDir);
         break;
       case 'last':
-        await downLastAppliedMigration(connection, collection);
+        await downLastAppliedMigration(connection, collection, migrationsDir);
         break;
     }
   } finally {

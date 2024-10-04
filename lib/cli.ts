@@ -4,6 +4,7 @@ import { init } from './commands/init';
 import { newCommand } from './commands/new';
 import { status } from './commands/status';
 import { up } from './commands/up';
+import { fixPaths } from './commands/fixPaths';
 import { Config, processConfig } from './config';
 
 export const cli = (config?: Config): void => {
@@ -85,6 +86,22 @@ export const cli = (config?: Config): void => {
       .description('Show the status of the migrations')
       .action(async () => {
         await status({ config });
+      });
+
+    program
+      .command('fix-paths')
+      .description('Convert absolute migration file paths into relative paths')
+      .option(
+        '-p, --base-path <path>',
+        'Override the base path. The absolute migration dir on the current machine is used as default'
+      )
+      .option('-d, --dry-run', "Show updates but don't apply them")
+      .action(async (opts) => {
+        await fixPaths({
+          config,
+          basePath: opts.basePath,
+          dryRun: !!opts.dryRun,
+        });
       });
   }
 

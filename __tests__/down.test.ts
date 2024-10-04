@@ -43,7 +43,7 @@ describe('down command', () => {
     new Promise((resolve) => resolve(fakeMigrations))
   );
 
-  (loadMigrationFile as jest.Mock).mockImplementation((file: string) => [
+  (loadMigrationFile as jest.Mock).mockImplementation((_migrationsDir:string, file: string) => [
     {
       ...fakeMigrations.find((m: MigrationModel) => m.file === file),
       instance: fakeMigrationInstance,
