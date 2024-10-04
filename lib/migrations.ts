@@ -21,13 +21,17 @@ const isMigration = (obj: any): boolean => {
 };
 
 export const loadMigrationFile = async (
-  filePath: string
+  migrationsDir: string,
+  filePath: string,
 ): Promise<MigrationObject[]> => {
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`File ${filePath} not exists.`);
+
+  const absoluteFilePath = path.resolve(migrationsDir, filePath);
+
+  if (!fs.existsSync(absoluteFilePath)) {
+    throw new Error(`File ${absoluteFilePath} does not exist.`);
   }
 
-  const classes = await import(path.resolve(filePath));
+  const classes = await import(path.resolve(absoluteFilePath));
 
   return Object.keys(classes)
     .filter((key: string) => typeof classes[key] === 'function')
@@ -51,7 +55,7 @@ export const loadMigrations = async (
   const migrations = await Promise.all(
     paths
       .map((path) => (typeof path === 'string' ? path : path.fullpath()))
-      .map((path) => loadMigrationFile(`${migrationsDir}/${path}`))
+      .map((path) => loadMigrationFile(migrationsDir, path))
   );
 
   // flat migrations because in one file can be more than one migration
