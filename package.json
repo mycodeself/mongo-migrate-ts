@@ -42,7 +42,7 @@
     "mongodb": "^6.2.0",
     "prettier": "^2.5.1",
     "rimraf": "^4.4.0",
-    "rollup": "^2.66.1",
+    "rollup": "^4.24.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -58,8 +58,8 @@
     "cli-table": "^0.3.11",
     "commander": "^9.0.0",
     "connection-string": "^4.3.5",
-    "glob": "^10.3.12",
     "date-fns": "^2.30.0",
+    "glob": "^10.3.12",
     "ora": "5.4.1"
   },
   "peerDependencies": {
@@ -67,7 +67,8 @@
   },
   "resolutions": {
     "string-width": "4.2.3",
-    "strip-ansi": "6.0.1"
+    "strip-ansi": "6.0.1",
+    "micromatch": ">=4.0.8"
   },
   "lint-staged": {
     "*.{ts,js}": [
