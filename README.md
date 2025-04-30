@@ -179,11 +179,12 @@ export class Transaction1691171075957 implements MigrationInterface {
 }
 ```
 
-## Fixing absolute migration file paths
+## Upgrading to version 2.x.x
 
-Old versions of this package used to store migration file paths as absolute paths which meant a rollback could only be performed from the same machine that executed the migration, or one with a similar directory structure.
+In version 1.x.x, this package stored migration file paths as absolute paths. As a result, rollbacks could only be executed from the same machine that performed the original migration, or from another with an identical directory structure.
 
-To fix these migration entries in your database you can use the `fix-paths` command:
+To address this limitation, version 2.x.x now uses paths relative to the migrationsDir.
+To update existing migration entries in your database and ensure compatibility, you can run the `fix-paths` command:
 
 ```
 ts-node migrations/index.ts fix-paths --base-path "[PATH_TO_MIGRATIONS_DIR_AS_SAVED_IN_DATABASE]" --dry-run
