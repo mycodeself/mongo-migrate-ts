@@ -64,6 +64,9 @@
   "peerDependencies": {
     "mongodb": "4.x.x || 5.x.x || 6.x.x"
   },
+  "overrides": {
+    "cross-spawn@7.0.3": "cross-spawn@7.0.6"
+  },
   "lint-staged": {
     "*.{ts,js}": [
       "yarn lint",
