@@ -21,7 +21,6 @@ export const fixPaths = async ({
   const basePathWithMigrationsDirDefault =
     basePath ?? path.resolve(migrationsDir);
 
-
   try {
     const cursor = collection.find({
       file: new RegExp(`^${basePathWithMigrationsDirDefault}.*`),
