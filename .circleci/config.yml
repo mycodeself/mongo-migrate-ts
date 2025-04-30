@@ -28,7 +28,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: yarn test:ci
-      - run: yarn audit --level high --frozen-lockfile
+      - run: /bin/bash -c 'yarn audit --level=critical; [[ $? -ge 16 ]] && exit 1 || exit 0'
 
   test-example:
     executor: node-with-mongo

@@ -23,10 +23,9 @@
   "license": "MIT",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^12.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^13.0.0",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/cli-table": "^0.3.1",
     "@types/commander": "^2.12.2",
     "@types/jest": "^27.4.0",
@@ -48,7 +47,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.31.1",
-    "semantic-release": "^23.1.1",
+    "semantic-release": "^24.2.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
@@ -58,21 +57,18 @@
     "cli-table": "^0.3.11",
     "commander": "^9.0.0",
     "connection-string": "^4.3.5",
-    "glob": "^10.3.12",
     "date-fns": "^2.30.0",
+    "glob": "^10.3.12",
     "ora": "5.4.1"
   },
   "peerDependencies": {
     "mongodb": "4.x.x || 5.x.x || 6.x.x"
-  },
-  "resolutions": {
-    "string-width": "4.2.3",
-    "strip-ansi": "6.0.1"
   },
   "lint-staged": {
     "*.{ts,js}": [
       "yarn lint",
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
