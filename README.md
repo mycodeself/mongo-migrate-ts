@@ -38,9 +38,14 @@ Commands:
   status          Show the status of the migrations
 ```
 
-Create a directory for your migrations and instantiate a CLI
+Create a directory for your migrations.
+```bash
+mongo-migrate init
+```
 
+Instantiate a CLI within the newly created migrations directory
 ```typescript
+// index.ts in this example
 import { mongoMigrateCli } from 'mongo-migrate-ts';
 
 mongoMigrateCli({
@@ -52,6 +57,9 @@ mongoMigrateCli({
 ```
 
 Create a migration file in the configured migrations folder...
+```bash
+mongo-migrate new
+```
 
 ```typescript
 import { MigrationInterface } from 'mongo-migrate-ts';
