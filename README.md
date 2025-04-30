@@ -28,14 +28,16 @@ npm install -g mongo-migrate-ts
 Usage: mongo-migrate [options] [command]
 
 Options:
-  -h, --help      output usage information
+  -h, --help           display help for command
 
 Commands:
-  init            Creates the migrations directory and configuration file
-  new [options]   Create a new migration file under migrations directory
-  up              Run all pending migrations
-  down [options]  Undo migrations
-  status          Show the status of the migrations
+  init                 Creates the migrations directory and configuration file
+  new [options]        Create a new migration file under migrations directory
+  up                   Run all pending migrations
+  down [options]       Undo migrations
+  status               Show the status of the migrations
+  fix-paths [options]  Convert absolute migration file paths into relative paths
+  help [command]       display help for command
 ```
 
 Create a directory for your migrations.
@@ -176,3 +178,15 @@ export class Transaction1691171075957 implements MigrationInterface {
   }
 }
 ```
+
+## Upgrading to version 2.x.x
+
+In version 1.x.x, this package stored migration file paths as absolute paths. As a result, rollbacks could only be executed from the same machine that performed the original migration, or from another with an identical directory structure.
+
+To address this limitation, version 2.x.x now uses paths relative to the migrationsDir.
+To update existing migration entries in your database and ensure compatibility, you can run the `fix-paths` command:
+
+```
+ts-node migrations/index.ts fix-paths --base-path "[PATH_TO_MIGRATIONS_DIR_AS_SAVED_IN_DATABASE]" --dry-run
+```
+
