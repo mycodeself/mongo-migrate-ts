@@ -9,6 +9,7 @@ import {
 } from '../database';
 import { DbConnectionError, ExecuteMigrationError } from '../errors';
 import { MigrationObject, loadMigrations } from '../migrations';
+import { timestamp } from '../utils/timestamp';
 
 interface CommandUpOptions {
   config: Config;
@@ -23,6 +24,7 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
     migrationsDir,
     globPattern,
     globOptions,
+    migrationNameTimestampFormat,
   } = processConfig(opts.config);
   let connection: DatabaseConnection;
   try {
@@ -49,11 +51,14 @@ export const up = async (opts: CommandUpOptions): Promise<void> => {
       )
       .sort((a, b): number => {
         // sort migrations by timestamp before applying
+        const timestampLength = `${timestamp(migrationNameTimestampFormat)}`
+          .length;
+
         const aTimestamp = Number(
-          a.className.substring(a.className.length - 13)
+          a.className.substring(a.className.length - timestampLength)
         );
         const bTimestamp = Number(
-          b.className.substring(b.className.length - 13)
+          b.className.substring(b.className.length - timestampLength)
         );
         return aTimestamp > bTimestamp ? 1 : -1;
       });
