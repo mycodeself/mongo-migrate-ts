@@ -29,7 +29,7 @@
     "@types/cli-table": "^0.3.1",
     "@types/commander": "^2.12.2",
     "@types/jest": "^27.4.0",
-    "@types/node": "^17.0.13",
+    "@types/node": "^25.0.8",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "eslint": "^8.8.0",
@@ -38,7 +38,7 @@
     "husky": "^8.0.3",
     "jest": "^29.5.0",
     "lint-staged": "^12.3.2",
-    "mongodb": "^6.2.0",
+    "mongodb": "^7.0.0",
     "prettier": "^2.5.1",
     "rimraf": "^4.4.0",
     "rollup": "^4.24.0",
@@ -62,7 +62,7 @@
     "ora": "5.4.1"
   },
   "peerDependencies": {
-    "mongodb": "4.x.x || 5.x.x || 6.x.x"
+    "mongodb": "4.x.x || 5.x.x || 6.x.x || 7.x.x"
   },
   "lint-staged": {
     "*.{ts,js}": [

@@ -3,7 +3,7 @@
     "outDir": "dist",
     "module": "commonjs",
     "target": "esnext",
-    "lib": ["es6"],
+    "lib": ["ESNext"],
     "sourceMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
